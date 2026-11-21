@@ -1,0 +1,144 @@
+﻿{
+  "institucional": {
+    "titulo": "Laboratório de Modelagem Computacional",
+    "sigla": "LabMC",
+    "vinculacao": "PC&T / Instituto de Engenharia e Geociências (IEG)",
+    "localizacao": "Bloco 26, Unidade Tapajós, Santarém, PA",
+    "area": "36 m²",
+    "horario_geral": "SEGUNDA A SEXTA, 08H00 ÀS 18H00",
+    "instagram": "https://www.instagram.com/labmc.ufopa",
+    "instagram_handle": "@labmc.ufopa"
+  },
+  "coordenacao": {
+    "nome": "Prof. Dr. Josecley Fialho Góes",
+    "cargo": "Coordenação do LabMC",
+    "descricao": "Docente do Instituto de Engenharia e Geociências (IEG / UFOPA). Linhas de pesquisa: Dinâmica dos Fluidos Computacional (DFC), Métodos Numéricos e Computação Paralela em GPU (CUDA).",
+    "lattes": "http://lattes.cnpq.br/"
+  },
+  "equipe": [
+    { "name": "Prof. Dr. Josecley Fialho Góes", "role": "Coordenador / Pesquisador", "category": "pesquisadores", "area": "CFD, Métodos Numéricos e GPU CUDA" },
+    { "name": "Corpo Docente Colaborador IEG", "role": "Pesquisadores Associados", "category": "pesquisadores", "area": "Modelagem Matemática e Engenharia Física" },
+    { "name": "Equipe Técnica de Laboratório", "role": "Suporte Técnico IEG", "category": "tecnicos", "area": "Administração Linux, Redes e Hardware GPU" },
+    { "name": "Monitores Voluntários e Bolsistas", "role": "Alunos de Graduação (PC&T)", "category": "graduacao", "area": "Apoio às Disciplinas de Programação e CFD" },
+    { "name": "Discentes de Iniciação Científica", "role": "Graduação (PIBIC / PIBITI)", "category": "graduacao", "area": "Simulação de Escoamentos e CUDA" },
+    { "name": "Discentes de Mestrado e Doutorado", "role": "Pós-Graduação", "category": "pos", "area": "Modelagem Computacional Aplicada na Amazônia" },
+    { "name": "Pesquisadores Egressos (PC&T / IEG)", "role": "Egressos LabMC", "category": "egressos", "area": "Engenharia, Ciência de Dados e Pós-Graduação" },
+    { "name": "Bolsistas de Extensão Tecnológica", "role": "Graduação", "category": "graduacao", "area": "Cursos de CFD e Machine Learning" }
+  ],
+  "documentos": [
+    {
+      "tag": "NORMATIVA INTERNA",
+      "titulo": "Regimento Interno do LabMC",
+      "descricao": "Estabelece as normas de funcionamento, competências da coordenação, critérios de vinculação de pesquisadores e regras de uso do Bloco 26.",
+      "resumo": "Documento normativo aprovado no âmbito do Instituto de Engenharia e Geociências (IEG / UFOPA). Define horários de acesso, prioridades de agendamento de estações GPU e deveres dos usuários vinculados ao PC&T.",
+      "arquivo_pdf": "/static/docs/regimento-labmc.pdf"
+    },
+    {
+      "tag": "GUIA TÉCNICO",
+      "titulo": "Manual de Utilização e CUDA",
+      "descricao": "Procedimentos para acesso às contas Linux, submissão de rotinas em GPU NVIDIA CUDA, boas práticas de armazenamento e segurança elétrica.",
+      "resumo": "Instruções técnicas para compilação com nvcc, gerenciamento de quotas de disco no servidor local e protocolo de desligamento seguro das estações de trabalho após simulações longas.",
+      "arquivo_pdf": "/static/docs/manual-cuda-labmc.pdf"
+    },
+    {
+      "tag": "FORMULÁRIO PADRÃO",
+      "titulo": "Termo de Responsabilidade",
+      "descricao": "Documento obrigatório para discentes de graduação (TCC e iniciação científica) e pós-graduação solicitarem credenciais de acesso contínuo.",
+      "resumo": "Requer assinatura do discente e ciência do docente orientador vinculado ao IEG/UFOPA, especificando o plano de trabalho e o período de utilização dos recursos computacionais.",
+      "arquivo_pdf": "/static/docs/termo-responsabilidade-labmc.pdf"
+    }
+  ],
+  "projetos": [
+    {
+      "title": "Simulação Numérica de Escoamentos em Dinâmica dos Fluidos Computacional (DFC)",
+      "category": "cfd",
+      "tag": "DFC / CFD",
+      "summary": "Desenvolvimento e validação de modelos numéricos para escoamentos laminares e turbulentos aplicados a problemas de engenharia na região amazônica.",
+      "tools": ["OpenFOAM", "ParaView", "Volumes Finitos"]
+    },
+    {
+      "title": "Aceleração de Solvers Numéricos em Arquitetura Paralela NVIDIA CUDA",
+      "category": "cuda",
+      "tag": "GPU CUDA",
+      "summary": "Implementação de algoritmos paralelos em C/C++ utilizando a API CUDA da NVIDIA para redução do tempo computacional em malhas de alta densidade.",
+      "tools": ["C/C++", "NVIDIA CUDA", "Computação Paralela"]
+    },
+    {
+      "title": "Métodos Computacionais Aplicados ao Ensino de Engenharia no PC&T",
+      "category": "cfd",
+      "tag": "ENSINO & MONITORIA",
+      "summary": "Produção de roteiros práticos, códigos-fonte didáticos e suporte computacional às disciplinas de programação e cálculo numérico do IEG.",
+      "tools": ["Python", "NumPy", "SciPy"]
+    },
+    {
+      "title": "Modelagem Preditiva e Aprendizado de Máquina para Dados Científicos",
+      "category": "ml",
+      "tag": "MACHINE LEARNING",
+      "summary": "Aplicação de técnicas de aprendizado de máquina e redes neurais para análise de séries temporais ambientais e redução de ordem de modelos físicos.",
+      "tools": ["Python", "Scikit-learn", "PyTorch"]
+    }
+  ],
+  "producoes": [
+    {
+      "year": "2025",
+      "type": "Artigo em Periódico",
+      "title": "Parallel GPU Implementation of Navier-Stokes Solvers Using NVIDIA CUDA Architecture",
+      "authors": "GÓES, J. F. et al.",
+      "venue": "Revista de Modelagem Computacional e Engenharia Aplicada",
+      "link": ""
+    },
+    {
+      "year": "2024",
+      "type": "Trabalho em Evento",
+      "title": "Análise Numérica de Escoamentos Internos via Método dos Volumes Finitos no Ambiente OpenFOAM",
+      "authors": "DISCENTES PC&T; GÓES, J. F.",
+      "venue": "Jornada Acadêmica da UFOPA (Santarém, PA)",
+      "link": ""
+    },
+    {
+      "year": "2024",
+      "type": "Trabalho de Conclusão de Curso",
+      "title": "Otimização de Multiplicação de Matrizes Esparsas em GPU para Sistemas Lineares de Grande Porte",
+      "authors": "EGRESSO ENGENHARIA FÍSICA / PC&T",
+      "venue": "Instituto de Engenharia e Geociências, UFOPA",
+      "link": ""
+    },
+    {
+      "year": "2023",
+      "type": "Material Didático",
+      "title": "Apostila Introdutória de Programação Científica e Métodos Numéricos para o PC&T",
+      "authors": "EQUIPE DE MONITORIA LABMC",
+      "venue": "Laboratório de Modelagem Computacional, UFOPA",
+      "link": ""
+    }
+  ],
+  "eventos": [
+    {
+      "badge": "EXTENSÃO",
+      "badge_dark": false,
+      "local": "MODALIDADE ONLINE",
+      "titulo": "Curso Online em Dinâmica dos Fluidos (CFD)",
+      "descricao": "Capacitação introdutória e aplicada em modelagem de escoamentos, geração de malhas e simulação numérica voltada a discentes de engenharia e ciências exatas.",
+      "detalhes": "Ementa: Fundamentos das equações de Navier-Stokes, discretização pelo Método dos Volumes Finitos, configuração de casos no OpenFOAM e pós-processamento no ParaView.",
+      "cta": "Detalhes da ementa"
+    },
+    {
+      "badge": "SELEÇÃO",
+      "badge_dark": true,
+      "local": "BLOCO 26",
+      "titulo": "Edital de Monitoria do LabMC",
+      "descricao": "Seleção de monitores para apoio às atividades de laboratório nas disciplinas de programação, métodos computacionais e atendimento aos alunos do PC&T e IEG.",
+      "detalhes": "Atribuições: Apoio presencial no Bloco 26 aos discentes das disciplinas de programação do PC&T, manutenção do ambiente Linux e auxílio nas oficinas de extensão do laboratório.",
+      "cta": "Requisitos e atribuições"
+    },
+    {
+      "badge": "CAPACITAÇÃO",
+      "badge_dark": false,
+      "local": "INSCRIÇÕES",
+      "titulo": "Curso de Machine Learning",
+      "descricao": "Formação prática em aprendizado de máquina com Python, regressão, classificação e redes neurais aplicadas a problemas científicos e de engenharia.",
+      "detalhes": "Conteúdo programático: Pré-processamento de dados científicos em Python, modelos supervisionados e não supervisionados, validação cruzada e aceleração em GPU.",
+      "cta": "Conteúdo programático"
+    }
+  ]
+}

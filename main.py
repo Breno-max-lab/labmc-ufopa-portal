@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from typing import List, Optional
@@ -14,8 +15,8 @@ load_dotenv()
 
 app = FastAPI(
     title="Portal Institucional LabMC - UFOPA",
-    description="Backend e servidor estático do Laboratório de Modelagem Computacional da UFOPA",
-    version="1.0.0",
+    description="Backend, CMS em JSON e servidor estático do Laboratório de Modelagem Computacional da UFOPA",
+    version="1.1.0",
 )
 
 app.add_middleware(
@@ -28,6 +29,7 @@ app.add_middleware(
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
+DATA_FILE = BASE_DIR / "data" / "portal_content.json"
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
@@ -77,6 +79,16 @@ async def health_check():
         "service": "labmc-ufopa-portal",
         "ai_configured": bool(GEMINI_API_KEY),
     }
+
+
+@app.get("/api/content")
+async def get_portal_content():
+    if not DATA_FILE.exists():
+        raise HTTPException(status_code=404, detail="Arquivo portal_content.json não encontrado.")
+    try:
+        return json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="Erro ao ler dados estruturados do portal.") from exc
 
 
 @app.post("/api/chat", response_model=ChatResponse)
@@ -129,7 +141,6 @@ async def chat_endpoint(payload: ChatRequest):
         if not reply_text:
             raise ValueError("Resposta vazia retornada pelo modelo.")
 
-        # Garante remoção de travessões longos caso ocorram na geração
         reply_text = reply_text.replace(" — ", ", ").replace("—", ", ").replace(" – ", ", ")
 
         return ChatResponse(reply=reply_text, mode="api")
@@ -146,7 +157,6 @@ async def chat_endpoint(payload: ChatRequest):
         ) from exc
 
 
-# Serve arquivos estáticos e o portal principal
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 

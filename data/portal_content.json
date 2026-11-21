@@ -145,6 +145,7 @@
       "link": ""
     }
   ],
+  
   "eventos": [
     {
       "badge": "EXTENSÃO",
@@ -173,5 +174,6 @@
       "detalhes": "Conteúdo programático: Pré-processamento de dados científicos em Python, modelos supervisionados e não supervisionados, validação cruzada e aceleração em GPU.",
       "cta": "Conteúdo programático"
     }
-  ]
+  ],
+  "agendamentos": []
 }

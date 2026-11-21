@@ -183,7 +183,7 @@
       <nav class="hidden lg:flex items-center gap-7 text-[13px] font-medium text-zinc-700">
         <a href="#inicio" class="nav-link hover:text-black transition-colors">Início</a>
         <a href="#sobre" class="nav-link hover:text-black transition-colors">O Laboratório</a>
-        <a href="#infraestrutura" class="nav-link hover:text-black transition-colors">Infraestrutura &amp; Documentos</a>
+        <a href="#infraestrutura" class="nav-link hover:text-black transition-colors">Infraestrutura &amp; Agendamentos</a>
         <a href="#equipe" class="nav-link hover:text-black transition-colors">Equipe</a>
         <a href="#projetos" class="nav-link hover:text-black transition-colors">Projetos</a>
         <a href="#producoes" class="nav-link hover:text-black transition-colors">Produções</a>
@@ -191,8 +191,8 @@
       </nav>
 
       <div class="hidden sm:flex items-center gap-3">
-        <a href="#contato" class="px-4 py-2 text-[13px] font-medium text-white bg-lab-green hover:bg-lab-greenDark rounded-[2px] transition-colors">
-          Contato &amp; Acesso
+        <a href="#infraestrutura" onclick="switchInfraTab('agendamento')" class="px-4 py-2 text-[13px] font-medium text-white bg-lab-green hover:bg-lab-greenDark rounded-[2px] transition-colors">
+          Agendar Máquina / Espaço
         </a>
       </div>
 
@@ -204,7 +204,7 @@
     <div id="mobileMenu" class="hidden lg:hidden bg-white border-b border-lab-border px-4 py-4 space-y-2 text-sm">
       <a href="#inicio" class="block py-1.5 font-medium text-black">Início</a>
       <a href="#sobre" class="block py-1.5 text-zinc-700">O Laboratório (Bloco 26)</a>
-      <a href="#infraestrutura" class="block py-1.5 text-zinc-700">Infraestrutura, Equipamentos &amp; Documentos</a>
+      <a href="#infraestrutura" class="block py-1.5 text-zinc-700">Infraestrutura, Agendamentos &amp; Documentos</a>
       <a href="#equipe" class="block py-1.5 text-zinc-700">Equipe</a>
       <a href="#projetos" class="block py-1.5 text-zinc-700">Projetos</a>
       <a href="#producoes" class="block py-1.5 text-zinc-700">Produções</a>
@@ -233,12 +233,12 @@
           </p>
 
           <div class="flex flex-wrap items-center gap-3 pt-1">
-            <a href="#projetos" class="px-5 py-2.5 bg-lab-green hover:bg-lab-greenDark text-white text-sm font-medium rounded-[2px] transition-colors inline-flex items-center gap-2">
-              <span>Linhas e Projetos</span>
+            <a href="#infraestrutura" onclick="switchInfraTab('agendamento')" class="px-5 py-2.5 bg-lab-green hover:bg-lab-greenDark text-white text-sm font-medium rounded-[2px] transition-colors inline-flex items-center gap-2">
+              <span>Solicitar Máquina (PC) ou Espaço</span>
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
-            <a href="#infraestrutura" class="px-5 py-2.5 bg-white hover:bg-lab-surface text-black border border-lab-borderStrong text-sm font-medium rounded-[2px] transition-colors">
-              Equipamentos e Regimento
+            <a href="#projetos" class="px-5 py-2.5 bg-white hover:bg-lab-surface text-black border border-lab-borderStrong text-sm font-medium rounded-[2px] transition-colors">
+              Linhas e Projetos
             </a>
           </div>
 
@@ -375,7 +375,7 @@
               <button onclick="openPhotoModal(0)" class="text-left p-3 border border-lab-border hover:border-lab-green bg-lab-paper transition-colors rounded-[2px]">
                 <div class="text-[11px] font-mono text-lab-green">01</div>
                 <div class="text-xs font-medium text-black mt-1">Estações de Trabalho</div>
-                <div class="text-[11px] text-zinc-500 mt-0.5">Bancadas com GPUs</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Máquinas com GPUs</div>
               </button>
               <button onclick="openPhotoModal(1)" class="text-left p-3 border border-lab-border hover:border-lab-green bg-lab-paper transition-colors rounded-[2px]">
                 <div class="text-[11px] font-mono text-lab-green">02</div>
@@ -399,29 +399,29 @@
     </div>
   </section>
 
-  <!-- 02. Infraestrutura, Equipamentos & Documentos -->
+  <!-- 02. Infraestrutura, Agendamentos & Documentos -->
   <section id="infraestrutura" class="py-16 lg:py-20 border-b border-lab-border bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <div class="text-xs font-mono uppercase tracking-wider text-lab-green font-semibold">02 / Recursos e Normas</div>
-          <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Infraestrutura &amp; Documentos</h2>
+          <div class="text-xs font-mono uppercase tracking-wider text-lab-green font-semibold">02 / Recursos, Reservas e Normas</div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Infraestrutura &amp; Agendamentos</h2>
         </div>
 
-        <div class="inline-flex border border-lab-borderStrong rounded-[2px] bg-lab-paper p-0.5 self-start">
+        <div class="inline-flex flex-wrap border border-lab-borderStrong rounded-[2px] bg-lab-paper p-0.5 self-start">
           <button onclick="switchInfraTab('equipamentos')" id="tab-equipamentos" class="infra-tab px-4 py-1.5 text-xs font-medium bg-lab-green text-white rounded-[2px] transition-colors">
             Equipamentos
+          </button>
+          <button onclick="switchInfraTab('agendamento')" id="tab-agendamento" class="infra-tab px-4 py-1.5 text-xs font-medium text-zinc-700 hover:text-black rounded-[2px] transition-colors">
+            Solicitar Máquina / Espaço
           </button>
           <button onclick="switchInfraTab('documentos')" id="tab-documentos" class="infra-tab px-4 py-1.5 text-xs font-medium text-zinc-700 hover:text-black rounded-[2px] transition-colors">
             Regimento &amp; Manuais
           </button>
-          <button onclick="switchInfraTab('agendamento')" id="tab-agendamento" class="infra-tab px-4 py-1.5 text-xs font-medium text-zinc-700 hover:text-black rounded-[2px] transition-colors">
-            Solicitar Bancada
-          </button>
         </div>
       </div>
 
-      <!-- Aba Equipamentos (Carregada via JSON com fallback) -->
+      <!-- Aba Equipamentos -->
       <div id="panel-equipamentos" class="infra-panel">
         <div class="border border-lab-border rounded-[2px] overflow-hidden">
           <table class="w-full text-left border-collapse">
@@ -463,54 +463,128 @@
         </div>
       </div>
 
-      <!-- Aba Documentos (Carregada via JSON com fallback) -->
-      <div id="panel-documentos" class="infra-panel hidden">
-        <div id="docsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
-      </div>
+      <!-- Aba Agendamento Real (Máquina PC e Espaço Físico) -->
+      <div id="panel-agendamento" class="infra-panel hidden space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- Formulário de Solicitação -->
+          <div class="lg:col-span-7 border border-lab-border p-6 sm:p-8 rounded-[2px] bg-lab-paper">
+            <div class="mb-4">
+              <h3 class="text-base font-bold text-black">Solicitação de Máquina (PC) ou Espaço do LabMC</h3>
+              <p class="text-xs text-zinc-600 mt-0.5">
+                Toda solicitação gera um protocolo e passa pela aprovação da coordenação no Bloco 26.
+              </p>
+            </div>
 
-      <!-- Aba Agendamento -->
-      <div id="panel-agendamento" class="infra-panel hidden">
-        <div class="border border-lab-border p-6 sm:p-8 rounded-[2px] bg-lab-paper max-w-3xl">
-          <h3 class="text-base font-bold text-black">Solicitação de Uso de Estação Computacional</h3>
-          <p class="text-xs text-zinc-600 mt-1 mb-6">
-            Preencha os dados abaixo para registrar pedido de bancada (TCC, Iniciação Científica, Pós-Graduação ou disciplinas do PC&amp;T).
-          </p>
-
-          <form id="bookingForm" onsubmit="handleBookingSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-medium text-black mb-1">Nome Completo</label>
-              <input type="text" required placeholder="Nome do discente ou pesquisador" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-black mb-1">Matrícula / SIAPE</label>
-              <input type="text" required placeholder="Ex: 2024001234" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm font-mono text-black focus:outline-none focus:border-lab-green">
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-black mb-1">Curso ou Programa (IEG)</label>
-              <select class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
-                <option>Bacharelado Interdisciplinar em Ciência e Tecnologia (PC&amp;T)</option>
-                <option>Engenharia Física</option>
-                <option>Ciência da Computação / Sistemas de Informação</option>
-                <option>Pós-Graduação / Pesquisa Docente</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-medium text-black mb-1">Recurso Necessário</label>
-              <select class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
-                <option>Estação GPU NVIDIA CUDA</option>
-                <option>Simulação CFD (OpenFOAM)</option>
-                <option>Bancada de Estudo / Programação</option>
-              </select>
-            </div>
-            <div class="sm:col-span-2 flex items-center justify-between pt-2">
-              <span class="text-xs text-zinc-500">Sujeito à disponibilidade de horários no Bloco 26.</span>
-              <button type="submit" class="px-5 py-2 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px] transition-colors">
-                Registrar Solicitação
+            <!-- Seletor de Tipo de Solicitação -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6">
+              <button type="button" onclick="selectBookingType('maquina')" id="bkTypeBtn-maquina" class="bk-type-btn py-2.5 px-3 bg-lab-green text-white text-xs font-medium rounded-[2px] text-center transition-colors">
+                Solicitação de Máquina (PC)
+              </button>
+              <button type="button" onclick="selectBookingType('espaco')" id="bkTypeBtn-espaco" class="bk-type-btn py-2.5 px-3 bg-white text-zinc-700 border border-lab-borderStrong hover:text-black text-xs font-medium rounded-[2px] text-center transition-colors">
+                Solicitar Lab (Evento / Aula / Reunião)
               </button>
             </div>
-          </form>
-          <div id="bookingFeedback" class="hidden mt-4 p-3 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono rounded-[2px]"></div>
+
+            <form id="bookingForm" onsubmit="handleBookingSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input type="hidden" id="bkTipoSolicitacao" value="maquina" />
+
+              <div>
+                <label class="block text-xs font-medium text-black mb-1">Nome Completo do Responsável</label>
+                <input id="bkNome" type="text" required placeholder="Nome do discente ou docente" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-black mb-1">Matrícula / SIAPE</label>
+                <input id="bkMatricula" type="text" required placeholder="Ex: 2024001234" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm font-mono text-black focus:outline-none focus:border-lab-green">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-black mb-1">E-mail Institucional</label>
+                <input id="bkEmail" type="email" required placeholder="nome@ufopa.edu.br" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-black mb-1">Curso, Programa ou Setor</label>
+                <input id="bkVinculo" type="text" required placeholder="Ex: PC&T / IEG / Engenharia Física" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+              </div>
+
+              <!-- Opções para Máquina (PC) -->
+              <div id="bkMachineField" class="sm:col-span-2">
+                <label class="block text-xs font-medium text-black mb-1">Configuração / Máquina (PC) Desejada</label>
+                <select id="bkRecursoMaquina" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+                  <option value="Estação GPU NVIDIA CUDA (Processamento Paralelo)">Estação GPU NVIDIA CUDA (Processamento Paralelo)</option>
+                  <option value="PC Simulação CFD (OpenFOAM / ParaView / Malhas)">PC Simulação CFD (OpenFOAM / ParaView / Malhas)</option>
+                  <option value="PC Bancada Linux (Python / Ciência de Dados / TCC)">PC Bancada Linux (Python / Ciência de Dados / TCC)</option>
+                </select>
+              </div>
+
+              <!-- Opções para Evento / Reunião / Aula / Outros -->
+              <div id="bkSpaceField" class="hidden sm:col-span-2">
+                <label class="block text-xs font-medium text-black mb-1">Finalidade de Uso do Laboratório (Bloco 26)</label>
+                <select id="bkFinalidadeEspaco" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+                  <option value="Aula Prática / Disciplina (IEG / PC&T)">Aula Prática / Disciplina (IEG / PC&T)</option>
+                  <option value="Evento / Minicurso / Oficina Tecnológica">Evento / Minicurso / Oficina Tecnológica</option>
+                  <option value="Reunião de Grupo de Pesquisa / Orientação">Reunião de Grupo de Pesquisa / Orientação</option>
+                  <option value="Outros (Atividade Acadêmica / Extensão)">Outros (Atividade Acadêmica / Extensão)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-black mb-1">Data Desejada</label>
+                <input id="bkData" type="date" required class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm font-mono text-black focus:outline-none focus:border-lab-green">
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-medium text-black mb-1">Início</label>
+                  <input id="bkInicio" type="time" required value="08:00" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm font-mono text-black focus:outline-none focus:border-lab-green">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-black mb-1">Término</label>
+                  <input id="bkFim" type="time" required value="12:00" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm font-mono text-black focus:outline-none focus:border-lab-green">
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-black mb-1">Descrição da Atividade / Justificativa</label>
+                <textarea id="bkJustificativa" rows="2" required placeholder="Informe o título do projeto/disciplina, número estimado de participantes ou software que será executado..." class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green"></textarea>
+              </div>
+
+              <div class="sm:col-span-2 flex flex-wrap items-center justify-between gap-2 pt-2">
+                <span class="text-xs text-zinc-500">Status inicial: <strong class="font-mono text-black">PENDENTE DE APROVAÇÃO</strong></span>
+                <button id="bkSubmitBtn" type="submit" class="px-5 py-2.5 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px] transition-colors">
+                  Enviar Solicitação
+                </button>
+              </div>
+            </form>
+            <div id="bookingFeedback" class="hidden mt-4 p-3.5 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono rounded-[2px]"></div>
+          </div>
+
+          <!-- Coluna Direita: Consultar Protocolo + Reservas Aprovadas -->
+          <div class="lg:col-span-5 space-y-6">
+            <div class="border border-lab-border p-6 rounded-[2px] bg-white">
+              <div class="text-[11px] font-mono text-lab-green font-semibold">ACOMPANHAMENTO</div>
+              <h4 class="text-sm font-bold text-black mt-0.5">Consultar Status da Solicitação</h4>
+              <p class="text-xs text-zinc-600 mt-1 mb-3">Digite o número do protocolo (ex: LABMC-A1B2C3) ou sua matrícula/SIAPE.</p>
+              <form onsubmit="checkBookingStatusForm(event)" class="flex gap-2">
+                <input id="bkLookupInput" type="text" required placeholder="Protocolo ou Matrícula..." class="flex-1 px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs font-mono uppercase focus:outline-none focus:border-lab-green">
+                <button type="submit" class="px-3.5 py-2 bg-black hover:bg-zinc-800 text-white text-xs font-mono rounded-[2px]">
+                  Consultar
+                </button>
+              </form>
+              <div id="bkLookupResult" class="mt-3 space-y-2 text-xs"></div>
+            </div>
+
+            <div class="border border-lab-border p-6 rounded-[2px] bg-white">
+              <div class="text-[11px] font-mono text-lab-green font-semibold">AGENDA CONFIRMADA</div>
+              <h4 class="text-sm font-bold text-black mt-0.5">Agendamentos Aprovados pela Coordenação</h4>
+              <div id="approvedBookingsList" class="mt-3 divide-y divide-lab-border border border-lab-border rounded-[2px] text-xs">
+                <div class="p-3 text-zinc-500 font-mono">Nenhum agendamento extra confirmado no momento.</div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Aba Documentos -->
+      <div id="panel-documentos" class="infra-panel hidden">
+        <div id="docsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
       </div>
     </div>
   </section>
@@ -601,7 +675,7 @@
 
       <div id="eventsGrid" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10"></div>
 
-      <!-- Agenda Semanal (Carregada via JSON com fallback) -->
+      <!-- Agenda Semanal -->
       <div class="border border-lab-border rounded-[2px] p-6 bg-white">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-lab-border">
           <h3 class="text-sm font-bold text-black">Agenda Regular de Uso do Laboratório (Bloco 26)</h3>
@@ -658,7 +732,7 @@
             <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Contato Institucional</h2>
           </div>
           <p class="text-sm text-zinc-700 leading-relaxed">
-            Para dúvidas sobre projetos de iniciação científica, orientação de TCC, uso das estações GPU ou parcerias acadêmicas, entre em contato com a coordenação do laboratório.
+            Para dúvidas sobre projetos de iniciação científica, orientação de TCC, uso das máquinas GPU ou parcerias acadêmicas, entre em contato com a coordenação do laboratório.
           </p>
 
           <div class="space-y-3 pt-2 text-xs">
@@ -780,7 +854,7 @@
 
       <div id="chatMessages" class="p-4 h-80 overflow-y-auto space-y-3 bg-lab-paper chat-scroll text-xs">
         <div class="bg-white border border-lab-border p-3 rounded-[2px] text-zinc-800 leading-relaxed">
-          Olá. Sou o assistente virtual do <strong class="text-black">LabMC (UFOPA)</strong>. Posso responder dúvidas sobre o funcionamento do laboratório no Bloco 26, acesso às estações NVIDIA CUDA, editais, cursos ou conceitos de CFD e programação científica.
+          Olá. Sou o assistente virtual do <strong class="text-black">LabMC (UFOPA)</strong>. Posso responder dúvidas sobre o funcionamento do laboratório no Bloco 26, solicitação de máquinas (PC/GPU) ou espaço para eventos/aulas, editais e conceitos de CFD e CUDA.
         </div>
       </div>
 
@@ -788,8 +862,8 @@
         <button onclick="sendQuickQuestion('Como funciona o laboratório?')" class="px-2 py-1 text-[11px] bg-lab-paper hover:bg-lab-greenLight hover:text-lab-green border border-lab-border rounded-[2px] text-zinc-700 transition-colors">
           Como funciona o lab?
         </button>
-        <button onclick="sendQuickQuestion('Como reservar bancada?')" class="px-2 py-1 text-[11px] bg-lab-paper hover:bg-lab-greenLight hover:text-lab-green border border-lab-border rounded-[2px] text-zinc-700 transition-colors">
-          Reservar bancada
+        <button onclick="sendQuickQuestion('Como solicitar máquina PC ou espaço?')" class="px-2 py-1 text-[11px] bg-lab-paper hover:bg-lab-greenLight hover:text-lab-green border border-lab-border rounded-[2px] text-zinc-700 transition-colors">
+          Solicitar PC / Espaço
         </button>
         <button onclick="sendQuickQuestion('Equipamentos e GPUs CUDA')" class="px-2 py-1 text-[11px] bg-lab-paper hover:bg-lab-greenLight hover:text-lab-green border border-lab-border rounded-[2px] text-zinc-700 transition-colors">
           Equipamentos CUDA
@@ -1005,8 +1079,8 @@
     ];
 
     const photoDetails = [
-      { title: 'Estações de Trabalho', desc: 'Bancadas equipadas com computadores dedicados à programação científica, compilação em C/C++ e execução de simulações em GPU NVIDIA CUDA no Bloco 26.' },
-      { title: 'Sala de Simulação (36 m²)', desc: 'Ambiente climatizado no Bloco 26 da Unidade Tapajós, projetado para acomodar discentes de iniciação científica, TCC e pesquisadores do IEG.' },
+      { title: 'Estações de Trabalho', desc: 'Máquinas equipadas com GPUs NVIDIA dedicadas à programação científica, compilação em C/C++ e execução de simulações CUDA no Bloco 26.' },
+      { title: 'Sala de Simulação (36 m²)', desc: 'Ambiente climatizado no Bloco 26 da Unidade Tapajós, projetado para acomodar discentes de iniciação científica, TCC, aulas e reuniões do IEG.' },
       { title: 'Aulas Práticas e Monitoria', desc: 'Infraestrutura utilizada para atendimento presencial da monitoria do LabMC e aulas práticas das disciplinas do Programa de Ciência e Tecnologia (PC&T).' },
       { title: 'Bloco 26, Unidade Tapajós', desc: 'Localização institucional do LabMC no Campus Santarém da Universidade Federal do Oeste do Pará (UFOPA).' }
     ];
@@ -1143,6 +1217,24 @@
       lucide.createIcons();
     }
 
+    function renderApprovedBookings(list) {
+      const container = document.getElementById('approvedBookingsList');
+      if (!container) return;
+      if (!Array.isArray(list) || list.length === 0) {
+        container.innerHTML = '<div class="p-3 text-zinc-500 font-mono">Nenhum agendamento extra confirmado no momento.</div>';
+        return;
+      }
+      container.innerHTML = list.map(b => `
+        <div class="p-3 bg-lab-paper">
+          <div class="flex items-center justify-between font-mono text-[11px]">
+            <span class="text-lab-green font-semibold">${b.data_desejada} • ${b.horario_inicio}-${b.horario_fim}</span>
+            <span class="text-zinc-500 uppercase">${b.tipo_solicitacao === 'maquina' ? 'MÁQUINA (PC)' : 'ESPAÇO LAB'}</span>
+          </div>
+          <div class="font-medium text-black mt-0.5">${b.recurso_ou_finalidade}</div>
+        </div>
+      `).join('');
+    }
+
     async function loadPortalContent() {
       if (window.location.protocol === 'file:') return;
       try {
@@ -1223,6 +1315,7 @@
         renderPublications();
         renderDocuments();
         renderEvents();
+        renderApprovedBookings(data.agendamentos_aprovados || []);
       } catch (e) {
         // Mantém fallback embutido
       }
@@ -1241,11 +1334,114 @@
         btn.classList.add('text-zinc-700');
       });
       const activeBtn = document.getElementById(`tab-${tabName}`);
-      activeBtn.classList.add('bg-lab-green', 'text-white');
-      activeBtn.classList.remove('text-zinc-700');
+      if (activeBtn) {
+        activeBtn.classList.add('bg-lab-green', 'text-white');
+        activeBtn.classList.remove('text-zinc-700');
+      }
 
       document.querySelectorAll('.infra-panel').forEach(panel => panel.classList.add('hidden'));
-      document.getElementById(`panel-${tabName}`).classList.remove('hidden');
+      const activePanel = document.getElementById(`panel-${tabName}`);
+      if (activePanel) activePanel.classList.remove('hidden');
+    }
+
+    function selectBookingType(tipo) {
+      document.getElementById('bkTipoSolicitacao').value = tipo;
+      document.querySelectorAll('.bk-type-btn').forEach(btn => {
+        btn.classList.remove('bg-lab-green', 'text-white');
+        btn.classList.add('bg-white', 'text-zinc-700', 'border', 'border-lab-borderStrong');
+      });
+      const active = document.getElementById(`bkTypeBtn-${tipo}`);
+      active.classList.remove('bg-white', 'text-zinc-700', 'border', 'border-lab-borderStrong');
+      active.classList.add('bg-lab-green', 'text-white');
+
+      if (tipo === 'maquina') {
+        document.getElementById('bkMachineField').classList.remove('hidden');
+        document.getElementById('bkSpaceField').classList.add('hidden');
+      } else {
+        document.getElementById('bkMachineField').classList.add('hidden');
+        document.getElementById('bkSpaceField').classList.remove('hidden');
+      }
+    }
+
+    async function handleBookingSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('bkSubmitBtn');
+      const fb = document.getElementById('bookingFeedback');
+      btn.disabled = true;
+      btn.textContent = 'Registrando...';
+
+      const tipo = document.getElementById('bkTipoSolicitacao').value;
+      const recurso = tipo === 'maquina'
+        ? document.getElementById('bkRecursoMaquina').value
+        : document.getElementById('bkFinalidadeEspaco').value;
+
+      const payload = {
+        tipo_solicitacao: tipo,
+        solicitante_nome: document.getElementById('bkNome').value,
+        matricula_siape: document.getElementById('bkMatricula').value,
+        email: document.getElementById('bkEmail').value,
+        vinculo_curso: document.getElementById('bkVinculo').value,
+        recurso_ou_finalidade: recurso,
+        data_desejada: document.getElementById('bkData').value,
+        horario_inicio: document.getElementById('bkInicio').value,
+        horario_fim: document.getElementById('bkFim').value,
+        justificativa: document.getElementById('bkJustificativa').value
+      };
+
+      try {
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Falha ao registrar solicitação.');
+        const data = await res.json();
+        fb.innerHTML = `Solicitação registrada! Guarde seu protocolo de acompanhamento: <strong class="underline text-black">${data.protocolo}</strong> (Status atual: PENDENTE DE APROVAÇÃO).`;
+        fb.classList.remove('hidden');
+        e.target.reset();
+        selectBookingType(tipo);
+      } catch (err) {
+        fb.textContent = 'Erro ao enviar solicitação. Tente novamente em instantes.';
+        fb.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar Solicitação';
+      }
+    }
+
+    async function checkBookingStatusForm(e) {
+      e.preventDefault();
+      const q = document.getElementById('bkLookupInput').value.trim();
+      const box = document.getElementById('bkLookupResult');
+      if (!q) return;
+
+      box.innerHTML = '<div class="text-zinc-500 font-mono">Consultando...</div>';
+      try {
+        const res = await fetch(`/api/bookings/status/${encodeURIComponent(q)}`);
+        const data = await res.json();
+        if (!data.results || data.results.length === 0) {
+          box.innerHTML = '<div class="p-2.5 bg-lab-paper border border-lab-border text-zinc-600 font-mono">Nenhum registro encontrado para este protocolo ou matrícula.</div>';
+          return;
+        }
+        box.innerHTML = data.results.map(r => {
+          let color = 'text-amber-700 bg-amber-50 border-amber-200';
+          if (r.status === 'APROVADO') color = 'text-lab-green bg-lab-greenLight border-lab-greenBorder';
+          if (r.status === 'RECUSADO') color = 'text-red-700 bg-red-50 border-red-200';
+          return `
+            <div class="p-3 bg-lab-paper border border-lab-border rounded-[2px] space-y-1">
+              <div class="flex items-center justify-between font-mono">
+                <span class="font-bold text-black">${r.protocolo}</span>
+                <span class="px-2 py-0.5 border rounded-[2px] font-semibold ${color}">${r.status}</span>
+              </div>
+              <div class="font-medium text-black">${r.recurso_ou_finalidade}</div>
+              <div class="text-zinc-600 font-mono">Data: ${r.data_desejada} (${r.horario_inicio} - ${r.horario_fim})</div>
+              ${r.observacao_admin ? `<div class="text-zinc-700 pt-1 border-t border-lab-border"><strong>Parecer Coordenação:</strong> ${r.observacao_admin}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        box.innerHTML = '<div class="text-red-700 font-mono">Erro ao consultar status.</div>';
+      }
     }
 
     function openInfoModal(title, body, tag = 'INFORMAÇÃO INSTITUCIONAL') {
@@ -1270,14 +1466,6 @@
 
     function openEventModal(title, desc) {
       openInfoModal(title, desc, 'EVENTO / OPORTUNIDADE');
-    }
-
-    function handleBookingSubmit(e) {
-      e.preventDefault();
-      const fb = document.getElementById('bookingFeedback');
-      fb.textContent = 'Solicitação registrada com sucesso. A coordenação do LabMC analisará a disponibilidade de bancada no Bloco 26.';
-      fb.classList.remove('hidden');
-      e.target.reset();
     }
 
     function handleContactSubmit(e) {
@@ -1394,8 +1582,8 @@
         },
         {
           keywords: ['quem pode', 'participar', 'entrar', 'acesso', 'aluno', 'discente', 'preciso ser'],
-          answer: 'Podem utilizar o LabMC discentes de graduação (especialmente do **PC&T**, Engenharia Física e cursos do **IEG**), alunos de pós-graduação e docentes pesquisadores.\n\nO acesso ocorre por meio de disciplinas práticas, atendimento de monitoria, participação em editais de seleção ou solicitação de bancada para TCC e Iniciação Científica.',
-          actionLabel: 'Solicitar acesso',
+          answer: 'Podem utilizar o LabMC discentes de graduação (especialmente do **PC&T**, Engenharia Física e cursos do **IEG**), alunos de pós-graduação e docentes pesquisadores.\n\nO acesso ocorre por meio de disciplinas práticas, atendimento de monitoria, participação em editais de seleção ou solicitação de máquina/espaço para TCC, aulas e eventos.',
+          actionLabel: 'Solicitar máquina ou espaço',
           actionHref: '#infraestrutura'
         },
         {
@@ -1405,14 +1593,14 @@
           actionHref: '#sobre'
         },
         {
-          keywords: ['bancada', 'reservar', 'reserva', 'agendar', 'agendamento', 'usar computador', 'tcc', 'iniciacao'],
-          answer: 'Para reservar uma estação de trabalho para TCC, Iniciação Científica (PIBIC/PIBITI) ou pesquisa, preencha o formulário na aba **Solicitar Bancada** (seção Infraestrutura), informe seu curso e recurso desejado, e apresente o **Termo de Responsabilidade** assinado.',
-          actionLabel: 'Ir para Solicitar Bancada',
+          keywords: ['maquina', 'pc', 'reservar', 'reserva', 'agendar', 'agendamento', 'usar computador', 'tcc', 'iniciacao', 'evento', 'reuniao', 'aula', 'espaco'],
+          answer: 'Na aba **Solicitar Máquina / Espaço** (seção Infraestrutura), você pode registrar tanto uma **Solicitação de Máquina (PC/GPU)** quanto uma **Solicitação de Espaço do Laboratório** para eventos, aulas práticas, reuniões ou outras atividades acadêmicas.\n\nO pedido gera um protocolo imediato e passa pela aprovação da coordenação no painel administrativo.',
+          actionLabel: 'Ir para Solicitar Máquina / Espaço',
           actionHref: '#infraestrutura'
         },
         {
           keywords: ['cuda', 'gpu', 'nvidia', 'equipamento', 'computador', 'hardware', 'linux', 'software', 'openfoam'],
-          answer: 'O laboratório dispõe de **estações de trabalho equipadas com GPUs NVIDIA (arquitetura CUDA)** e bancadas em ambiente **Ubuntu Linux**.\n\n**Softwares instalados:** CUDA Toolkit (NVCC), GCC/G++, OpenFOAM, ParaView, Gmsh e stack Python científica (NumPy, SciPy, Scikit-learn, PyTorch e Jupyter).',
+          answer: 'O laboratório dispõe de **máquinas equipadas com GPUs NVIDIA (arquitetura CUDA)** e estações em ambiente **Ubuntu Linux**.\n\n**Softwares instalados:** CUDA Toolkit (NVCC), GCC/G++, OpenFOAM, ParaView, Gmsh e stack Python científica (NumPy, SciPy, Scikit-learn, PyTorch e Jupyter).',
           actionLabel: 'Ver tabela de equipamentos',
           actionHref: '#infraestrutura'
         },
@@ -1482,11 +1670,11 @@
       }
 
       return {
-        text: 'Posso ajudar com informações sobre **como funciona o LabMC**, **localização no Bloco 26**, **reserva de bancadas**, **equipamentos NVIDIA CUDA**, **editais de monitoria**, **cursos de CFD e Machine Learning** ou **contato com a coordenação**.',
+        text: 'Posso ajudar com informações sobre **como funciona o LabMC**, **localização no Bloco 26**, **solicitação de máquinas (PC/GPU) ou espaço para eventos/aulas**, **equipamentos NVIDIA CUDA**, **editais de monitoria** ou **contato com a coordenação**.',
         meta: {
           source: 'Base Institucional LabMC',
-          actionLabel: 'Enviar mensagem à coordenação',
-          actionHref: '#contato'
+          actionLabel: 'Solicitar Máquina ou Espaço',
+          actionHref: '#infraestrutura'
         }
       };
     }

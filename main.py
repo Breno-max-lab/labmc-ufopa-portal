@@ -2,6 +2,8 @@ import base64
 import json
 import os
 import re
+import uuid
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -18,8 +20,8 @@ load_dotenv()
 
 app = FastAPI(
     title="Portal Institucional LabMC - UFOPA",
-    description="Backend, CMS Completo em JSON, RAG de Documentos e Sincronização GitHub do LabMC UFOPA",
-    version="2.0.0",
+    description="Backend, CMS Completo em JSON, Agendamento de Máquinas/Espaço e RAG do LabMC UFOPA",
+    version="2.1.0",
 )
 
 app.add_middleware(
@@ -80,6 +82,24 @@ class ChatResponse(BaseModel):
     reply: str
     mode: str
     sources_used: List[str] = []
+
+
+class BookingCreateRequest(BaseModel):
+    tipo_solicitacao: str  # "maquina" ou "espaco"
+    solicitante_nome: str
+    matricula_siape: str
+    email: str
+    vinculo_curso: str
+    recurso_ou_finalidade: str
+    data_desejada: str
+    horario_inicio: str
+    horario_fim: str
+    justificativa: str
+
+
+class BookingDecisionRequest(BaseModel):
+    status: str  # "APROVADO" ou "RECUSADO"
+    observacao_admin: str = ""
 
 
 def verify_admin(x_admin_token: Optional[str]):
@@ -263,9 +283,95 @@ async def get_portal_content():
     if not DATA_FILE.exists():
         raise HTTPException(status_code=404, detail="Arquivo portal_content.json não encontrado.")
     try:
-        return json.loads(DATA_FILE.read_text(encoding="utf-8"))
+        data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+        # Oculta dados pessoais sensíveis na rota pública, mantendo apenas agenda aprovada
+        public_bookings = [
+            {
+                "protocolo": b.get("protocolo"),
+                "tipo_solicitacao": b.get("tipo_solicitacao"),
+                "recurso_ou_finalidade": b.get("recurso_ou_finalidade"),
+                "data_desejada": b.get("data_desejada"),
+                "horario_inicio": b.get("horario_inicio"),
+                "horario_fim": b.get("horario_fim"),
+                "status": b.get("status"),
+                "solicitante_resumo": b.get("solicitante_nome", "").split(" ")[0],
+            }
+            for b in data.get("agendamentos", [])
+            if b.get("status") == "APROVADO"
+        ]
+        safe_data = {k: v for k, v in data.items() if k != "agendamentos"}
+        safe_data["agendamentos_aprovados"] = public_bookings
+        return safe_data
     except Exception as exc:
         raise HTTPException(status_code=500, detail="Erro ao ler dados estruturados do portal.") from exc
+
+
+@app.post("/api/bookings")
+async def create_booking_request(payload: BookingCreateRequest):
+    """Recebe uma solicitação pública de Máquina (PC) ou Espaço Físico (Evento/Reunião/Aula) com status PENDENTE."""
+    if not DATA_FILE.exists():
+        raise HTTPException(status_code=404, detail="Arquivo portal_content.json não encontrado.")
+
+    if payload.tipo_solicitacao not in {"maquina", "espaco"}:
+        raise HTTPException(status_code=400, detail="Tipo de solicitação inválido.")
+
+    data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    agendamentos = data.setdefault("agendamentos", [])
+
+    protocolo = f"LABMC-{uuid.uuid4().hex[:6].upper()}"
+    novo_registro = {
+        "protocolo": protocolo,
+        "tipo_solicitacao": payload.tipo_solicitacao,
+        "solicitante_nome": payload.solicitante_nome.strip(),
+        "matricula_siape": payload.matricula_siape.strip(),
+        "email": payload.email.strip(),
+        "vinculo_curso": payload.vinculo_curso.strip(),
+        "recurso_ou_finalidade": payload.recurso_ou_finalidade.strip(),
+        "data_desejada": payload.data_desejada.strip(),
+        "horario_inicio": payload.horario_inicio.strip(),
+        "horario_fim": payload.horario_fim.strip(),
+        "justificativa": payload.justificativa.strip(),
+        "status": "PENDENTE",
+        "observacao_admin": "",
+        "criado_em": datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+    }
+
+    agendamentos.insert(0, novo_registro)
+    updated_json = json.dumps(data, ensure_ascii=False, indent=2)
+    DATA_FILE.write_text(updated_json, encoding="utf-8")
+
+    await github_upsert_file(
+        repo_path="data/portal_content.json",
+        content_bytes=updated_json.encode("utf-8"),
+        commit_message=f"feat(booking): nova solicitacao {protocolo} ({payload.tipo_solicitacao})",
+    )
+
+    return {"status": "ok", "protocolo": protocolo, "situacao": "PENDENTE"}
+
+
+@app.get("/api/bookings/status/{query}")
+async def check_booking_status(query: str):
+    """Permite ao solicitante consultar o status pelo Protocolo ou Matrícula/SIAPE."""
+    if not DATA_FILE.exists():
+        raise HTTPException(status_code=404, detail="Base não encontrada.")
+    q = query.strip().upper()
+    data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    matches = [
+        {
+            "protocolo": b.get("protocolo"),
+            "tipo_solicitacao": b.get("tipo_solicitacao"),
+            "solicitante_nome": b.get("solicitante_nome"),
+            "recurso_ou_finalidade": b.get("recurso_ou_finalidade"),
+            "data_desejada": b.get("data_desejada"),
+            "horario_inicio": b.get("horario_inicio"),
+            "horario_fim": b.get("horario_fim"),
+            "status": b.get("status"),
+            "observacao_admin": b.get("observacao_admin", ""),
+        }
+        for b in data.get("agendamentos", [])
+        if b.get("protocolo", "").upper() == q or b.get("matricula_siape", "").upper() == q
+    ]
+    return {"results": matches}
 
 
 @app.post("/api/admin/login")
@@ -274,13 +380,21 @@ async def admin_login(x_admin_token: Optional[str] = Header(None)):
     return {"authenticated": True, "github_sync": bool(GITHUB_TOKEN)}
 
 
+@app.get("/api/admin/full-content")
+async def admin_get_full_content(x_admin_token: Optional[str] = Header(None)):
+    """Retorna todos os dados completos, incluindo solicitações pendentes e contatos."""
+    verify_admin(x_admin_token)
+    if not DATA_FILE.exists():
+        raise HTTPException(status_code=404, detail="Arquivo portal_content.json não encontrado.")
+    return json.loads(DATA_FILE.read_text(encoding="utf-8"))
+
+
 @app.put("/api/admin/content")
 async def admin_update_full_content(
     payload: Dict[str, Any] = Body(...),
     commit_msg: str = Header("chore(admin): atualiza conteudo do portal LabMC", alias="X-Commit-Message"),
     x_admin_token: Optional[str] = Header(None),
 ):
-    """Atualiza todo o portal_content.json e sincroniza diretamente com o GitHub."""
     verify_admin(x_admin_token)
     try:
         updated_json = json.dumps(payload, ensure_ascii=False, indent=2)
@@ -293,6 +407,62 @@ async def admin_update_full_content(
         return {"status": "ok", "github_synced": synced}
     except Exception as exc:
         raise HTTPException(status_code=500, detail="Erro ao salvar conteúdo estruturado do portal.") from exc
+
+
+@app.put("/api/admin/bookings/{protocolo}")
+async def admin_decide_booking(
+    protocolo: str,
+    decision: BookingDecisionRequest,
+    x_admin_token: Optional[str] = Header(None),
+):
+    """Aprova ou recusa uma solicitação de Máquina (PC) ou Espaço Físico."""
+    verify_admin(x_admin_token)
+    if decision.status not in {"APROVADO", "RECUSADO", "PENDENTE"}:
+        raise HTTPException(status_code=400, detail="Status inválido.")
+
+    data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    agendamentos = data.get("agendamentos", [])
+    found = None
+    for item in agendamentos:
+        if item.get("protocolo") == protocolo:
+            item["status"] = decision.status
+            item["observacao_admin"] = decision.observacao_admin.strip()
+            found = item
+            break
+
+    if not found:
+        raise HTTPException(status_code=404, detail="Solicitação não encontrada.")
+
+    updated_json = json.dumps(data, ensure_ascii=False, indent=2)
+    DATA_FILE.write_text(updated_json, encoding="utf-8")
+
+    synced = await github_upsert_file(
+        repo_path="data/portal_content.json",
+        content_bytes=updated_json.encode("utf-8"),
+        commit_message=f"chore(admin): {decision.status.lower()} solicitacao {protocolo}",
+    )
+    return {"status": "ok", "github_synced": synced}
+
+
+@app.delete("/api/admin/bookings/{protocolo}")
+async def admin_delete_booking(protocolo: str, x_admin_token: Optional[str] = Header(None)):
+    verify_admin(x_admin_token)
+    data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    agendamentos = data.get("agendamentos", [])
+    new_list = [b for b in agendamentos if b.get("protocolo") != protocolo]
+    if len(new_list) == len(agendamentos):
+        raise HTTPException(status_code=404, detail="Solicitação não encontrada.")
+
+    data["agendamentos"] = new_list
+    updated_json = json.dumps(data, ensure_ascii=False, indent=2)
+    DATA_FILE.write_text(updated_json, encoding="utf-8")
+
+    synced = await github_upsert_file(
+        repo_path="data/portal_content.json",
+        content_bytes=updated_json.encode("utf-8"),
+        commit_message=f"chore(admin): remove agendamento {protocolo}",
+    )
+    return {"status": "deleted", "github_synced": synced}
 
 
 @app.post("/api/admin/upload-doc")

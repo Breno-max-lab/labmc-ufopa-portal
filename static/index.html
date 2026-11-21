@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LabMC | Laboratório de Modelagem Computacional - UFOPA</title>
+  <meta name="description" content="Laboratório de Modelagem Computacional (LabMC) - Programa de Ciência e Tecnologia (PC&T) e Instituto de Engenharia e Geociências (IEG), Unidade Tapajós, UFOPA." />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          },
+          colors: {
+            lab: {
+              green: '#38761d',
+              greenDark: '#2b5c16',
+              greenLight: '#eef5eb',
+              greenBorder: '#c5d9bd',
+              black: '#000000',
+              white: '#ffffff',
+              paper: '#fafafa',
+              surface: '#f4f4f5',
+              border: '#e4e4e7',
+              borderStrong: '#d4d4d8',
+              muted: '#52525b',
+              subtle: '#71717a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #ffffff;
+      color: #000000;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .nav-scrolled {
+      border-bottom-color: #d4d4d8;
+      background-color: rgba(255, 255, 255, 0.97);
+    }
+
+    .nav-link {
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #38761d;
+      transition: width 0.2s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .sim-canvas-bg {
+      background-color: #fafafa;
+      background-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .chat-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .chat-scroll::-webkit-scrollbar-track {
+      background: #fafafa;
+    }
+    .chat-scroll::-webkit-scrollbar-thumb {
+      background: #d4d4d8;
+      border-radius: 2px;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    .typing-dot {
+      animation: pulseDot 1.2s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  </style>
+</head>
+<body class="antialiased selection:bg-lab-green selection:text-white">
+
+  <!-- Barra Institucional Superior -->
+  <div class="bg-black text-white text-[11px] font-mono tracking-wide border-b border-zinc-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-8 flex items-center justify-between">
+      <div class="flex items-center gap-3 truncate">
+        <span class="text-zinc-300">UNIVERSIDADE FEDERAL DO OESTE DO PARÁ (UFOPA)</span>
+        <span class="hidden sm:inline text-zinc-600">|</span>
+        <span class="hidden sm:inline text-zinc-400">IEG / PC&amp;T</span>
+      </div>
+      <div class="flex items-center gap-4 shrink-0">
+        <span class="text-zinc-400 hidden md:inline">Unidade Tapajós, Bloco 26</span>
+        <a href="https://www.instagram.com/labmc.ufopa" target="_blank" rel="noopener noreferrer" class="text-white hover:text-zinc-300 underline underline-offset-2">
+          @labmc.ufopa
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navegação Principal -->
+  <header id="navbar" class="sticky top-0 z-40 bg-white border-b border-lab-border transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <a href="#inicio" class="flex items-center gap-3 group">
+        <div class="w-9 h-9 bg-lab-green flex items-center justify-center text-white rounded-[2px]">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="1" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="3" y1="15" x2="21" y2="15" />
+            <line x1="9" y1="3" x2="9" y2="21" />
+            <line x1="15" y1="3" x2="15" y2="21" />
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-black text-base tracking-tight leading-none">LabMC</span>
+            <span class="text-[11px] font-mono text-lab-green font-semibold">UFOPA</span>
+          </div>
+          <span class="text-[11px] text-lab-muted leading-none mt-1">Modelagem Computacional</span>
+        </div>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-7 text-[13px] font-medium text-zinc-700">
+        <a href="#inicio" class="nav-link hover:text-black transition-colors">Início</a>
+        <a href="#sobre" class="nav-link hover:text-black transition-colors">O Laboratório</a>
+        <a href="#infraestrutura" class="nav-link hover:text-black transition-colors">Infraestrutura &amp; Documentos</a>
+        <a href="#equipe" class="nav-link hover:text-black transition-colors">Equipe</a>
+        <a href="#projetos" class="nav-link hover:text-black transition-colors">Projetos</a>
+        <a href="#producoes" class="nav-link hover:text-black transition-colors">Produções</a>
+        <a href="#eventos" class="nav-link hover:text-black transition-colors">Eventos &amp; Agenda</a>
+      </nav>
+
+      <div class="hidden sm:flex items-center gap-3">
+        <a href="#contato" class="px-4 py-2 text-[13px] font-medium text-white bg-lab-green hover:bg-lab-greenDark rounded-[2px] transition-colors">
+          Contato &amp; Acesso
+        </a>
+      </div>
+
+      <button id="mobileMenuBtn" class="lg:hidden p-2 text-black border border-lab-border rounded-[2px]" aria-label="Abrir menu">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <div id="mobileMenu" class="hidden lg:hidden bg-white border-b border-lab-border px-4 py-4 space-y-2 text-sm">
+      <a href="#inicio" class="block py-1.5 font-medium text-black">Início</a>
+      <a href="#sobre" class="block py-1.5 text-zinc-700">O Laboratório (Bloco 26)</a>
+      <a href="#infraestrutura" class="block py-1.5 text-zinc-700">Infraestrutura, Equipamentos &amp; Documentos</a>
+      <a href="#equipe" class="block py-1.5 text-zinc-700">Equipe</a>
+      <a href="#projetos" class="block py-1.5 text-zinc-700">Projetos</a>
+      <a href="#producoes" class="block py-1.5 text-zinc-700">Produções</a>
+      <a href="#eventos" class="block py-1.5 text-zinc-700">Eventos &amp; Agenda</a>
+      <a href="#contato" class="block py-2 mt-2 text-center font-medium text-white bg-lab-green rounded-[2px]">Contato &amp; Acesso</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="inicio" class="border-b border-lab-border bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div class="lg:col-span-6 space-y-6">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono font-medium rounded-[2px]">
+            <span>PC&amp;T</span>
+            <span>•</span>
+            <span>Instituto de Engenharia e Geociências</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl lg:text-[42px] font-bold tracking-tight text-black leading-[1.15]">
+            Laboratório de Modelagem Computacional
+          </h1>
+
+          <p class="text-base text-zinc-700 leading-relaxed">
+            Unidade de pesquisa, ensino e extensão localizada no <strong class="font-semibold text-black">Bloco 26 da Unidade Tapajós (UFOPA)</strong>. Dedicada ao desenvolvimento de simulações em <strong class="font-semibold text-black">Dinâmica dos Fluidos Computacional (DFC/CFD)</strong> e computação científica de alto desempenho com processamento paralelo via <strong class="font-semibold text-black">API CUDA (NVIDIA)</strong>.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <a href="#projetos" class="px-5 py-2.5 bg-lab-green hover:bg-lab-greenDark text-white text-sm font-medium rounded-[2px] transition-colors inline-flex items-center gap-2">
+              <span>Linhas e Projetos</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+            <a href="#infraestrutura" class="px-5 py-2.5 bg-white hover:bg-lab-surface text-black border border-lab-borderStrong text-sm font-medium rounded-[2px] transition-colors">
+              Equipamentos e Regimento
+            </a>
+          </div>
+
+          <div class="grid grid-cols-3 gap-6 pt-6 border-t border-lab-border">
+            <div>
+              <div class="text-2xl font-bold font-mono text-black">36 m²</div>
+              <div class="text-xs text-lab-muted mt-0.5">Bloco 26, Tapajós</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold font-mono text-lab-green">DFC / CFD</div>
+              <div class="text-xs text-lab-muted mt-0.5">Escoamentos e Malhas</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold font-mono text-black">CUDA</div>
+              <div class="text-xs text-lab-muted mt-0.5">Processamento Paralelo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bancada Numérica Interativa -->
+        <div class="lg:col-span-6">
+          <div class="border border-lab-borderStrong bg-white rounded-[2px] overflow-hidden">
+            <div class="px-4 py-2.5 bg-lab-surface border-b border-lab-border flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-lab-green inline-block"></span>
+                <span class="text-xs font-mono font-medium text-black">BANCADA NUMÉRICA INTERATIVA</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <button onclick="setSimMode('cfd')" id="btn-cfd" class="sim-btn active px-2.5 py-1 text-[11px] font-mono bg-lab-green text-white rounded-[2px] transition-colors">
+                  CFD
+                </button>
+                <button onclick="setSimMode('cuda')" id="btn-cuda" class="sim-btn px-2.5 py-1 text-[11px] font-mono bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px] transition-colors">
+                  CUDA
+                </button>
+                <button onclick="setSimMode('mesh')" id="btn-mesh" class="sim-btn px-2.5 py-1 text-[11px] font-mono bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px] transition-colors">
+                  FEM
+                </button>
+              </div>
+            </div>
+
+            <div class="relative h-[300px] sm:h-[340px] w-full sim-canvas-bg">
+              <canvas id="labCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+            </div>
+
+            <div class="px-4 py-2.5 bg-white border-t border-lab-border flex items-center justify-between text-[11px] font-mono text-lab-muted">
+              <span id="simStatusText">Modo: Escoamento laminar em torno de obstáculo (mova o cursor)</span>
+              <span id="simTelemetry" class="text-black font-medium">NÓS: 420 | 60 FPS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01. Conheça o LabMC -->
+  <section id="sobre" class="py-16 lg:py-20 border-b border-lab-border bg-lab-paper">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-10">
+        <div class="text-xs font-mono uppercase tracking-wider text-lab-green font-semibold">01 / Institucional</div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Conheça o LabMC</h2>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="lg:col-span-7 bg-white border border-lab-border p-6 sm:p-8 rounded-[2px] flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-black">Missão e Vinculação Acadêmica</h3>
+            <p class="text-sm text-zinc-700 leading-relaxed">
+              O <strong class="font-semibold text-black">Laboratório de Modelagem Computacional (LabMC)</strong>, localizado no <strong class="font-semibold text-black">Bloco 26 da Unidade Tapajós</strong>, é vinculado ao <strong class="font-semibold text-black">Programa de Ciência e Tecnologia (PC&amp;T)</strong> do <strong class="font-semibold text-black">Instituto de Engenharia e Geociências (IEG)</strong> da UFOPA.
+            </p>
+            <p class="text-sm text-zinc-700 leading-relaxed">
+              Ocupando uma área física dedicada de <strong class="font-semibold text-black">36 metros quadrados</strong>, o laboratório fornece infraestrutura computacional necessária às disciplinas de programação, métodos numéricos e simulação do PC&amp;T e demais cursos do IEG, apoiando atividades de ensino, pesquisa aplicada e extensão tecnológica.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-lab-border">
+            <div class="p-4 bg-lab-paper border border-lab-border rounded-[2px]">
+              <div class="flex items-center gap-2 text-xs font-mono font-semibold text-lab-green mb-1.5">
+                <i data-lucide="wind" class="w-4 h-4"></i>
+                <span>DINÂMICA DOS FLUIDOS (DFC)</span>
+              </div>
+              <p class="text-xs text-zinc-600 leading-relaxed">
+                Modelagem matemática, discretização de malhas e simulação numérica de fenômenos de transporte e escoamentos.
+              </p>
+            </div>
+            <div class="p-4 bg-lab-paper border border-lab-border rounded-[2px]">
+              <div class="flex items-center gap-2 text-xs font-mono font-semibold text-black mb-1.5">
+                <i data-lucide="cpu" class="w-4 h-4 text-lab-green"></i>
+                <span>COMPUTAÇÃO PARALELA CUDA</span>
+              </div>
+              <p class="text-xs text-zinc-600 leading-relaxed">
+                Aceleração de algoritmos científicos e solvers numéricos em arquiteturas GPU por meio da API CUDA da NVIDIA.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 space-y-6">
+          <div class="bg-white border border-lab-border p-6 rounded-[2px]">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold text-black flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-4 h-4 text-lab-green"></i>
+                <span>Localização Física</span>
+              </h3>
+              <span class="text-[11px] font-mono text-lab-muted">SANTARÉM, PA</span>
+            </div>
+
+            <div class="border border-lab-border bg-lab-paper p-4 mb-4 rounded-[2px]">
+              <div class="text-xs font-mono text-black font-medium">UFOPA, Campus Santarém</div>
+              <div class="text-xs text-zinc-600 mt-1">Unidade Tapajós, Bloco 26 (Sala LabMC, 36 m²)</div>
+              <div class="text-xs text-zinc-500 mt-0.5">Rua Vera Paz, s/n, Bairro Salé, CEP 68040-255</div>
+            </div>
+
+            <a href="https://maps.google.com/?q=UFOPA+Unidade+Tapajos+Santarem+PA" target="_blank" rel="noopener noreferrer" class="w-full py-2 px-3 bg-white hover:bg-lab-surface border border-lab-borderStrong text-xs font-mono font-medium text-black rounded-[2px] flex items-center justify-center gap-2 transition-colors">
+              <span>Abrir no Google Maps</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+
+          <div class="bg-white border border-lab-border p-6 rounded-[2px]">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold text-black">Registros do Espaço Físico</h3>
+              <span class="text-[11px] font-mono text-lab-muted">4 FOTOS</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button onclick="openPhotoModal(0)" class="text-left p-3 border border-lab-border hover:border-lab-green bg-lab-paper transition-colors rounded-[2px]">
+                <div class="text-[11px] font-mono text-lab-green">01</div>
+                <div class="text-xs font-medium text-black mt-1">Estações de Trabalho</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Bancadas com GPUs</div>
+              </button>
+              <button onclick="openPhotoModal(1)" class="text-left p-3 border border-lab-border hover:border-lab-green bg-lab-paper transition-colors rounded-[2px]">
+                <div class="text-[11px] font-mono text-lab-green">02</div>
+                <div class="text-xs font-medium text-black mt-1">Sala de Simulação</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Área de 36 m²</div>
+              </button>
+              <button onclick="openPhotoModal(2)" class="text-left p-3 border border-lab-border hover:border-lab-green bg-lab-paper transition-colors rounded-[2px]">
+                <div class="text-[11px] font-mono text-lab-green">03</div>
+                <div class="text-xs font-medium text-black mt-1">Aulas e Monitoria</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Apoio ao PC&amp;T</div>
+              </button>
+              <button onclick="openPhotoModal(3)" class="text-left p-3 border border-lab-border hover:border-lab-green bg-lab-paper transition-colors rounded-[2px]">
+                <div class="text-[11px] font-mono text-lab-green">04</div>
+                <div class="text-xs font-medium text-black mt-1">Bloco 26</div>
+                <div class="text-[11px] text-zinc-500 mt-0.5">Unidade Tapajós</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02. Infraestrutura, Equipamentos & Documentos -->
+  <section id="infraestrutura" class="py-16 lg:py-20 border-b border-lab-border bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-wider text-lab-green font-semibold">02 / Recursos e Normas</div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Infraestrutura &amp; Documentos</h2>
+        </div>
+
+        <div class="inline-flex border border-lab-borderStrong rounded-[2px] bg-lab-paper p-0.5 self-start">
+          <button onclick="switchInfraTab('equipamentos')" id="tab-equipamentos" class="infra-tab px-4 py-1.5 text-xs font-medium bg-lab-green text-white rounded-[2px] transition-colors">
+            Equipamentos
+          </button>
+          <button onclick="switchInfraTab('documentos')" id="tab-documentos" class="infra-tab px-4 py-1.5 text-xs font-medium text-zinc-700 hover:text-black rounded-[2px] transition-colors">
+            Regimento &amp; Manuais
+          </button>
+          <button onclick="switchInfraTab('agendamento')" id="tab-agendamento" class="infra-tab px-4 py-1.5 text-xs font-medium text-zinc-700 hover:text-black rounded-[2px] transition-colors">
+            Solicitar Bancada
+          </button>
+        </div>
+      </div>
+
+      <!-- Aba Equipamentos -->
+      <div id="panel-equipamentos" class="infra-panel">
+        <div class="border border-lab-border rounded-[2px] overflow-hidden">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-lab-surface border-b border-lab-border text-[11px] font-mono uppercase text-zinc-600">
+                <th class="py-3 px-4">Recurso / Categoria</th>
+                <th class="py-3 px-4">Especificação Técnica</th>
+                <th class="py-3 px-4 hidden md:table-cell">Aplicação Principal</th>
+                <th class="py-3 px-4 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-lab-border text-sm">
+              <tr class="hover:bg-lab-paper">
+                <td class="py-4 px-4 font-semibold text-black">Estações GPU NVIDIA</td>
+                <td class="py-4 px-4 text-zinc-700">Workstations com GPUs NVIDIA arquitetura CUDA, processadores multi-core e memória dedicada</td>
+                <td class="py-4 px-4 text-zinc-600 hidden md:table-cell">Processamento paralelo via API CUDA (C/C++)</td>
+                <td class="py-4 px-4 text-right font-mono text-xs text-lab-green font-medium">OPERACIONAL</td>
+              </tr>
+              <tr class="hover:bg-lab-paper">
+                <td class="py-4 px-4 font-semibold text-black">Bancadas de Ensino</td>
+                <td class="py-4 px-4 text-zinc-700">Computadores com ambiente dual-boot Linux (Ubuntu) e suíte científica instalada</td>
+                <td class="py-4 px-4 text-zinc-600 hidden md:table-cell">Disciplinas do PC&amp;T, monitoria e cursos de extensão</td>
+                <td class="py-4 px-4 text-right font-mono text-xs text-lab-green font-medium">OPERACIONAL</td>
+              </tr>
+              <tr class="hover:bg-lab-paper">
+                <td class="py-4 px-4 font-semibold text-black">Ambiente CFD &amp; Malhas</td>
+                <td class="py-4 px-4 text-zinc-700">OpenFOAM, ParaView, Gmsh e bibliotecas de visualização científica</td>
+                <td class="py-4 px-4 text-zinc-600 hidden md:table-cell">Dinâmica dos Fluidos Computacional (DFC)</td>
+                <td class="py-4 px-4 text-right font-mono text-xs text-lab-green font-medium">INSTALADO</td>
+              </tr>
+              <tr class="hover:bg-lab-paper">
+                <td class="py-4 px-4 font-semibold text-black">Stack de Ciência de Dados</td>
+                <td class="py-4 px-4 text-zinc-700">Python 3, NumPy, SciPy, Scikit-learn, PyTorch, Jupyter e compiladores GCC/NVCC</td>
+                <td class="py-4 px-4 text-zinc-600 hidden md:table-cell">Machine Learning e métodos numéricos</td>
+                <td class="py-4 px-4 text-right font-mono text-xs text-lab-green font-medium">INSTALADO</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Aba Documentos -->
+      <div id="panel-documentos" class="infra-panel hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="border border-lab-border p-6 rounded-[2px] flex flex-col justify-between bg-lab-paper">
+            <div>
+              <div class="text-[11px] font-mono text-lab-green font-semibold mb-2">NORMATIVA INTERNA</div>
+              <h3 class="text-base font-bold text-black">Regimento Interno do LabMC</h3>
+              <p class="text-xs text-zinc-600 mt-2 leading-relaxed">
+                Estabelece as normas de funcionamento, competências da coordenação, critérios de vinculação de pesquisadores e regras de uso do Bloco 26.
+              </p>
+            </div>
+            <button onclick="openDocModal('Regimento Interno do LabMC', 'Documento normativo aprovado no âmbito do Instituto de Engenharia e Geociências (IEG / UFOPA). Define horários de acesso, prioridades de agendamento de estações GPU e deveres dos usuários vinculados ao PC&T.')" class="mt-6 w-full py-2 px-3 bg-white hover:bg-lab-surface border border-lab-borderStrong text-xs font-mono font-medium text-black rounded-[2px] flex items-center justify-between transition-colors">
+              <span>Consultar Documento</span>
+              <i data-lucide="file-text" class="w-4 h-4 text-lab-green"></i>
+            </button>
+          </div>
+
+          <div class="border border-lab-border p-6 rounded-[2px] flex flex-col justify-between bg-lab-paper">
+            <div>
+              <div class="text-[11px] font-mono text-lab-green font-semibold mb-2">GUIA TÉCNICO</div>
+              <h3 class="text-base font-bold text-black">Manual de Utilização e CUDA</h3>
+              <p class="text-xs text-zinc-600 mt-2 leading-relaxed">
+                Procedimentos para acesso às contas Linux, submissão de rotinas em GPU NVIDIA CUDA, boas práticas de armazenamento e segurança elétrica.
+              </p>
+            </div>
+            <button onclick="openDocModal('Manual de Utilização e Ambiente CUDA', 'Instruções técnicas para compilação com nvcc, gerenciamento de quotas de disco no servidor local e protocolo de desligamento seguro das estações de trabalho após simulações longas.')" class="mt-6 w-full py-2 px-3 bg-white hover:bg-lab-surface border border-lab-borderStrong text-xs font-mono font-medium text-black rounded-[2px] flex items-center justify-between transition-colors">
+              <span>Consultar Manual</span>
+              <i data-lucide="book-open" class="w-4 h-4 text-lab-green"></i>
+            </button>
+          </div>
+
+          <div class="border border-lab-border p-6 rounded-[2px] flex flex-col justify-between bg-lab-paper">
+            <div>
+              <div class="text-[11px] font-mono text-lab-green font-semibold mb-2">FORMULÁRIO PADRÃO</div>
+              <h3 class="text-base font-bold text-black">Termo de Responsabilidade</h3>
+              <p class="text-xs text-zinc-600 mt-2 leading-relaxed">
+                Documento obrigatório para discentes de graduação (TCC e iniciação científica) e pós-graduação solicitarem credenciais de acesso contínuo.
+              </p>
+            </div>
+            <button onclick="openDocModal('Termo de Responsabilidade de Usuário', 'Requer assinatura do discente e ciência do docente orientador vinculado ao IEG/UFOPA, especificando o plano de trabalho e o período de utilização dos recursos computacionais.')" class="mt-6 w-full py-2 px-3 bg-white hover:bg-lab-surface border border-lab-borderStrong text-xs font-mono font-medium text-black rounded-[2px] flex items-center justify-between transition-colors">
+              <span>Visualizar Modelo</span>
+              <i data-lucide="clipboard-check" class="w-4 h-4 text-lab-green"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aba Agendamento -->
+      <div id="panel-agendamento" class="infra-panel hidden">
+        <div class="border border-lab-border p-6 sm:p-8 rounded-[2px] bg-lab-paper max-w-3xl">
+          <h3 class="text-base font-bold text-black">Solicitação de Uso de Estação Computacional</h3>
+          <p class="text-xs text-zinc-600 mt-1 mb-6">
+            Preencha os dados abaixo para registrar pedido de bancada (TCC, Iniciação Científica, Pós-Graduação ou disciplinas do PC&amp;T).
+          </p>
+
+          <form id="bookingForm" onsubmit="handleBookingSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-black mb-1">Nome Completo</label>
+              <input type="text" required placeholder="Nome do discente ou pesquisador" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-black mb-1">Matrícula / SIAPE</label>
+              <input type="text" required placeholder="Ex: 2024001234" class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm font-mono text-black focus:outline-none focus:border-lab-green">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-black mb-1">Curso ou Programa (IEG)</label>
+              <select class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+                <option>Bacharelado Interdisciplinar em Ciência e Tecnologia (PC&amp;T)</option>
+                <option>Engenharia Física</option>
+                <option>Ciência da Computação / Sistemas de Informação</option>
+                <option>Pós-Graduação / Pesquisa Docente</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-black mb-1">Recurso Necessário</label>
+              <select class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+                <option>Estação GPU NVIDIA CUDA</option>
+                <option>Simulação CFD (OpenFOAM)</option>
+                <option>Bancada de Estudo / Programação</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2 flex items-center justify-between pt-2">
+              <span class="text-xs text-zinc-500">Sujeito à disponibilidade de horários no Bloco 26.</span>
+              <button type="submit" class="px-5 py-2 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px] transition-colors">
+                Registrar Solicitação
+              </button>
+            </div>
+          </form>
+          <div id="bookingFeedback" class="hidden mt-4 p-3 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono rounded-[2px]"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03. Equipe -->
+  <section id="equipe" class="py-16 lg:py-20 border-b border-lab-border bg-lab-paper">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-wider text-lab-green font-semibold">03 / Corpo Acadêmico</div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Equipe do Laboratório</h2>
+        </div>
+
+        <div class="flex flex-wrap gap-1.5">
+          <button onclick="filterTeam('todos')" class="team-filter active px-3 py-1.5 text-xs font-medium bg-lab-green text-white rounded-[2px]">Todos</button>
+          <button onclick="filterTeam('pesquisadores')" class="team-filter px-3 py-1.5 text-xs font-medium bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">Pesquisadores</button>
+          <button onclick="filterTeam('tecnicos')" class="team-filter px-3 py-1.5 text-xs font-medium bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">Técnicos</button>
+          <button onclick="filterTeam('graduacao')" class="team-filter px-3 py-1.5 text-xs font-medium bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">Graduação</button>
+          <button onclick="filterTeam('pos')" class="team-filter px-3 py-1.5 text-xs font-medium bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">Pós-Graduação</button>
+          <button onclick="filterTeam('egressos')" class="team-filter px-3 py-1.5 text-xs font-medium bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">Egressos</button>
+        </div>
+      </div>
+
+      <!-- Coordenação -->
+      <div class="bg-white border border-lab-border border-l-4 border-l-lab-green p-6 rounded-[2px] mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="text-[11px] font-mono text-lab-green font-semibold uppercase">Coordenação do LabMC</div>
+          <h3 class="text-lg font-bold text-black mt-0.5">Prof. Dr. Josecley Fialho Góes</h3>
+          <p class="text-xs text-zinc-600 mt-1">
+            Docente do Instituto de Engenharia e Geociências (IEG / UFOPA). Linhas de pesquisa: Dinâmica dos Fluidos Computacional (DFC), Métodos Numéricos e Computação Paralela em GPU (CUDA).
+          </p>
+        </div>
+        <a href="http://lattes.cnpq.br/" target="_blank" rel="noopener noreferrer" class="shrink-0 px-3.5 py-2 bg-white hover:bg-lab-surface border border-lab-borderStrong text-xs font-mono font-medium text-black rounded-[2px] inline-flex items-center gap-1.5">
+          <span>Currículo Lattes</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+      <div id="teamGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+    </div>
+  </section>
+
+  <!-- 04. Projetos -->
+  <section id="projetos" class="py-16 lg:py-20 border-b border-lab-border bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-wider text-lab-green font-semibold">04 / Pesquisa Aplicada</div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Projetos e Linhas de Atuação</h2>
+        </div>
+
+        <div class="flex flex-wrap gap-1.5">
+          <button onclick="filterProjects('todos')" class="proj-filter active px-3 py-1.5 text-xs font-medium bg-lab-green text-white rounded-[2px]">Todos</button>
+          <button onclick="filterProjects('cfd')" class="proj-filter px-3 py-1.5 text-xs font-medium bg-lab-paper text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">CFD / Fluidos</button>
+          <button onclick="filterProjects('cuda')" class="proj-filter px-3 py-1.5 text-xs font-medium bg-lab-paper text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">NVIDIA CUDA</button>
+          <button onclick="filterProjects('ml')" class="proj-filter px-3 py-1.5 text-xs font-medium bg-lab-paper text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">Machine Learning</button>
+        </div>
+      </div>
+
+      <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    </div>
+  </section>
+
+  <!-- 05. Produções -->
+  <section id="producoes" class="py-16 lg:py-20 border-b border-lab-border bg-lab-paper">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <div>
+          <div class="text-xs font-mono uppercase tracking-wider text-lab-green font-semibold">05 / Produção Científica</div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Produções Acadêmicas</h2>
+        </div>
+        <div class="w-full sm:w-72">
+          <input id="pubSearch" type="text" oninput="renderPublications()" placeholder="Filtrar por título, autor ou ano..." class="w-full px-3 py-2 bg-white border border-lab-borderStrong rounded-[2px] text-xs text-black focus:outline-none focus:border-lab-green">
+        </div>
+      </div>
+
+      <div id="publicationsList" class="bg-white border border-lab-border rounded-[2px] divide-y divide-lab-border"></div>
+    </div>
+  </section>
+
+  <!-- 06. Eventos & Agenda -->
+  <section id="eventos" class="py-16 lg:py-20 border-b border-lab-border bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-8">
+        <div class="text-xs font-mono uppercase tracking-wider text-lab-green font-semibold">06 / Ensino, Extensão e Oportunidades</div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Eventos, Cursos &amp; Agenda</h2>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+        <article class="border border-lab-border p-6 rounded-[2px] flex flex-col justify-between bg-lab-paper">
+          <div>
+            <div class="flex items-center justify-between text-[11px] font-mono mb-3">
+              <span class="px-2 py-0.5 bg-lab-green text-white rounded-[2px]">EXTENSÃO</span>
+              <span class="text-zinc-500">MODALIDADE ONLINE</span>
+            </div>
+            <h3 class="text-base font-bold text-black">Curso Online em Dinâmica dos Fluidos (CFD)</h3>
+            <p class="text-xs text-zinc-600 mt-2 leading-relaxed">
+              Capacitação introdutória e aplicada em modelagem de escoamentos, geração de malhas e simulação numérica voltada a discentes de engenharia e ciências exatas.
+            </p>
+          </div>
+          <button onclick="openEventModal('Curso Online em Dinâmica dos Fluidos (CFD)', 'Ementa: Fundamentos das equações de Navier-Stokes, discretização pelo Método dos Volumes Finitos, configuração de casos no OpenFOAM e pós-processamento no ParaView.')" class="mt-5 text-xs font-mono font-medium text-lab-green hover:underline inline-flex items-center gap-1">
+            <span>Detalhes da ementa</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </article>
+
+        <article class="border border-lab-border p-6 rounded-[2px] flex flex-col justify-between bg-lab-paper">
+          <div>
+            <div class="flex items-center justify-between text-[11px] font-mono mb-3">
+              <span class="px-2 py-0.5 bg-black text-white rounded-[2px]">SELEÇÃO</span>
+              <span class="text-zinc-500">BLOCO 26</span>
+            </div>
+            <h3 class="text-base font-bold text-black">Edital de Monitoria do LabMC</h3>
+            <p class="text-xs text-zinc-600 mt-2 leading-relaxed">
+              Seleção de monitores para apoio às atividades de laboratório nas disciplinas de programação, métodos computacionais e atendimento aos alunos do PC&amp;T e IEG.
+            </p>
+          </div>
+          <button onclick="openEventModal('Edital de Monitoria do LabMC', 'Atribuições: Apoio presencial no Bloco 26 aos discentes das disciplinas de programação do PC&T, manutenção do ambiente Linux e auxílio nas oficinas de extensão do laboratório.')" class="mt-5 text-xs font-mono font-medium text-lab-green hover:underline inline-flex items-center gap-1">
+            <span>Requisitos e atribuições</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </article>
+
+        <article class="border border-lab-border p-6 rounded-[2px] flex flex-col justify-between bg-lab-paper">
+          <div>
+            <div class="flex items-center justify-between text-[11px] font-mono mb-3">
+              <span class="px-2 py-0.5 bg-lab-green text-white rounded-[2px]">CAPACITAÇÃO</span>
+              <span class="text-zinc-500">INSCRIÇÕES</span>
+            </div>
+            <h3 class="text-base font-bold text-black">Curso de Machine Learning</h3>
+            <p class="text-xs text-zinc-600 mt-2 leading-relaxed">
+              Formação prática em aprendizado de máquina com Python, regressão, classificação e redes neurais aplicadas a problemas científicos e de engenharia.
+            </p>
+          </div>
+          <button onclick="openEventModal('Curso de Machine Learning', 'Conteúdo programático: Pré-processamento de dados científicos em Python, modelos supervisionados e não supervisionados, validação cruzada e aceleração em GPU.')" class="mt-5 text-xs font-mono font-medium text-lab-green hover:underline inline-flex items-center gap-1">
+            <span>Conteúdo programático</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </article>
+      </div>
+
+      <!-- Agenda Semanal -->
+      <div class="border border-lab-border rounded-[2px] p-6 bg-white">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-lab-border">
+          <h3 class="text-sm font-bold text-black">Agenda Regular de Uso do Laboratório (Bloco 26)</h3>
+          <span class="text-[11px] font-mono text-zinc-500">SEGUNDA A SEXTA, 08H00 ÀS 18H00</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          <div class="p-3 bg-lab-paper border border-lab-border rounded-[2px]">
+            <div class="font-mono font-semibold text-lab-green">SEGUNDA</div>
+            <div class="text-black font-medium mt-1">08h00 - 12h00</div>
+            <div class="text-zinc-600">Monitoria PC&amp;T</div>
+            <div class="text-black font-medium mt-2">14h00 - 18h00</div>
+            <div class="text-zinc-600">Pesquisa CFD / IC</div>
+          </div>
+          <div class="p-3 bg-lab-paper border border-lab-border rounded-[2px]">
+            <div class="font-mono font-semibold text-lab-green">TERÇA</div>
+            <div class="text-black font-medium mt-1">08h00 - 12h00</div>
+            <div class="text-zinc-600">Aulas Práticas IEG</div>
+            <div class="text-black font-medium mt-2">14h00 - 18h00</div>
+            <div class="text-zinc-600">Computação GPU CUDA</div>
+          </div>
+          <div class="p-3 bg-lab-paper border border-lab-border rounded-[2px]">
+            <div class="font-mono font-semibold text-lab-green">QUARTA</div>
+            <div class="text-black font-medium mt-1">08h00 - 12h00</div>
+            <div class="text-zinc-600">Monitoria PC&amp;T</div>
+            <div class="text-black font-medium mt-2">14h00 - 18h00</div>
+            <div class="text-zinc-600">Orientação de TCC</div>
+          </div>
+          <div class="p-3 bg-lab-paper border border-lab-border rounded-[2px]">
+            <div class="font-mono font-semibold text-lab-green">QUINTA</div>
+            <div class="text-black font-medium mt-1">08h00 - 12h00</div>
+            <div class="text-zinc-600">Aulas Práticas IEG</div>
+            <div class="text-black font-medium mt-2">14h00 - 18h00</div>
+            <div class="text-zinc-600">Seminários Internos</div>
+          </div>
+          <div class="p-3 bg-lab-paper border border-lab-border rounded-[2px]">
+            <div class="font-mono font-semibold text-lab-green">SEXTA</div>
+            <div class="text-black font-medium mt-1">08h00 - 12h00</div>
+            <div class="text-zinc-600">Oficinas &amp; Extensão</div>
+            <div class="text-black font-medium mt-2">14h00 - 18h00</div>
+            <div class="text-zinc-600">Manutenção de Cluster</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07. Contato -->
+  <section id="contato" class="py-16 lg:py-20 bg-lab-paper">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div class="lg:col-span-5 space-y-5">
+          <div>
+            <div class="text-xs font-mono uppercase tracking-wider text-lab-green font-semibold">07 / Comunicação</div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-black mt-1">Contato Institucional</h2>
+          </div>
+          <p class="text-sm text-zinc-700 leading-relaxed">
+            Para dúvidas sobre projetos de iniciação científica, orientação de TCC, uso das estações GPU ou parcerias acadêmicas, entre em contato com a coordenação do laboratório.
+          </p>
+
+          <div class="space-y-3 pt-2 text-xs">
+            <div class="p-3.5 bg-white border border-lab-border rounded-[2px]">
+              <div class="font-mono text-zinc-500">ENDEREÇO</div>
+              <div class="text-black font-medium mt-0.5">Bloco 26, Unidade Tapajós, UFOPA, Santarém, PA</div>
+            </div>
+            <div class="p-3.5 bg-white border border-lab-border rounded-[2px]">
+              <div class="font-mono text-zinc-500">VINCULAÇÃO</div>
+              <div class="text-black font-medium mt-0.5">Programa de Ciência e Tecnologia (PC&amp;T) / IEG</div>
+            </div>
+            <div class="p-3.5 bg-white border border-lab-border rounded-[2px] flex items-center justify-between">
+              <div>
+                <div class="font-mono text-zinc-500">INSTAGRAM OFICIAL</div>
+                <div class="text-black font-medium mt-0.5">@labmc.ufopa</div>
+              </div>
+              <a href="https://www.instagram.com/labmc.ufopa" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-lab-green text-white font-mono rounded-[2px]">
+                Acessar
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 bg-white border border-lab-border p-6 sm:p-8 rounded-[2px]">
+          <h3 class="text-base font-bold text-black mb-4">Enviar Mensagem à Coordenação</h3>
+          <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-black mb-1">Nome</label>
+                <input type="text" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-black mb-1">E-mail Institucional</label>
+                <input type="email" required placeholder="nome@discente.ufopa.edu.br" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-black mb-1">Assunto</label>
+              <input type="text" required placeholder="Ex: Iniciação Científica / Uso de GPU / Monitoria" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-black mb-1">Mensagem</label>
+              <textarea rows="4" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-sm text-black focus:outline-none focus:border-lab-green"></textarea>
+            </div>
+            <button type="submit" class="px-5 py-2.5 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px] transition-colors">
+              Enviar Mensagem
+            </button>
+          </form>
+          <div id="contactFeedback" class="hidden mt-4 p-3 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono rounded-[2px]"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rodapé -->
+  <footer class="bg-black text-white border-t border-zinc-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <span class="w-3 h-3 bg-lab-green inline-block"></span>
+          <span class="font-bold text-sm tracking-tight">LabMC, Laboratório de Modelagem Computacional</span>
+        </div>
+        <p class="text-xs text-zinc-400 mt-1.5">
+          Programa de Ciência e Tecnologia (PC&amp;T) • Instituto de Engenharia e Geociências (IEG) • UFOPA
+        </p>
+      </div>
+      <div class="text-xs font-mono text-zinc-400">
+        Bloco 26, Unidade Tapajós • Santarém, PA
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal Detalhes -->
+  <div id="infoModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white border border-black max-w-lg w-full p-6 rounded-[2px] shadow-xl">
+      <div class="flex items-start justify-between gap-4 pb-3 border-b border-lab-border">
+        <div>
+          <div id="modalTag" class="text-[11px] font-mono text-lab-green font-semibold uppercase">INFORMAÇÃO</div>
+          <h3 id="modalTitle" class="text-base font-bold text-black mt-0.5">Título</h3>
+        </div>
+        <button onclick="closeInfoModal()" class="p-1 text-zinc-500 hover:text-black">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p id="modalBody" class="text-sm text-zinc-700 leading-relaxed mt-4"></p>
+      <div class="mt-6 pt-3 border-t border-lab-border flex justify-end">
+        <button onclick="closeInfoModal()" class="px-4 py-1.5 bg-lab-green text-white text-xs font-medium rounded-[2px]">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assistente Virtual Híbrido -->
+  <div class="fixed bottom-5 right-5 z-40">
+    <div id="chatWindow" class="hidden mb-3 w-[340px] sm:w-[390px] bg-white border border-black rounded-[2px] shadow-2xl overflow-hidden flex flex-col">
+      <div class="bg-lab-green text-white px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="terminal" class="w-4 h-4"></i>
+          <div>
+            <div class="text-xs font-bold leading-none">Assistente LabMC</div>
+            <div id="chatModeBadge" class="text-[10px] font-mono text-zinc-100 mt-0.5">Verificando conexão...</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          <button onclick="clearChatHistory()" title="Limpar conversa" class="p-1 hover:bg-lab-greenDark rounded-[2px] text-white/90 hover:text-white">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          </button>
+          <button onclick="toggleChat()" title="Fechar" class="p-1 hover:bg-lab-greenDark rounded-[2px]">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="chatMessages" class="p-4 h-80 overflow-y-auto space-y-3 bg-lab-paper chat-scroll text-xs">
+        <div class="bg-white border border-lab-border p-3 rounded-[2px] text-zinc-800 leading-relaxed">
+          Olá. Sou o assistente virtual do <strong class="text-black">LabMC (UFOPA)</strong>. Posso responder dúvidas sobre o funcionamento do laboratório no Bloco 26, acesso às estações NVIDIA CUDA, editais, cursos ou conceitos de CFD e programação científica.
+        </div>
+      </div>
+
+      <div class="px-3 py-2 bg-white border-t border-lab-border flex flex-wrap gap-1.5">
+        <button onclick="sendQuickQuestion('Como funciona o laboratório?')" class="px-2 py-1 text-[11px] bg-lab-paper hover:bg-lab-greenLight hover:text-lab-green border border-lab-border rounded-[2px] text-zinc-700 transition-colors">
+          Como funciona o lab?
+        </button>
+        <button onclick="sendQuickQuestion('Como reservar bancada?')" class="px-2 py-1 text-[11px] bg-lab-paper hover:bg-lab-greenLight hover:text-lab-green border border-lab-border rounded-[2px] text-zinc-700 transition-colors">
+          Reservar bancada
+        </button>
+        <button onclick="sendQuickQuestion('Equipamentos e GPUs CUDA')" class="px-2 py-1 text-[11px] bg-lab-paper hover:bg-lab-greenLight hover:text-lab-green border border-lab-border rounded-[2px] text-zinc-700 transition-colors">
+          Equipamentos CUDA
+        </button>
+        <button onclick="sendQuickQuestion('Edital de monitoria')" class="px-2 py-1 text-[11px] bg-lab-paper hover:bg-lab-greenLight hover:text-lab-green border border-lab-border rounded-[2px] text-zinc-700 transition-colors">
+          Monitoria
+        </button>
+      </div>
+
+      <form onsubmit="handleChatSubmit(event)" class="p-2.5 bg-white border-t border-lab-border flex gap-2">
+        <input id="chatInput" type="text" placeholder="Digite sua dúvida sobre o LabMC..." class="flex-1 px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs text-black focus:outline-none focus:border-lab-green" autocomplete="off" />
+        <button id="chatSendBtn" type="submit" class="px-3.5 py-2 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px] transition-colors shrink-0">
+          Enviar
+        </button>
+      </form>
+    </div>
+
+    <button onclick="toggleChat()" id="chatLauncher" class="ml-auto flex items-center gap-2.5 px-4 py-3 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px] shadow-lg border border-black/10 transition-colors">
+      <i data-lucide="message-square" class="w-4 h-4"></i>
+      <span>Assistente LabMC</span>
+    </button>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    /* =====================================================================
+       CONFIGURAÇÃO DO ASSISTENTE (BACKEND FASTAPI / RENDER + FALLBACK LOCAL)
+       ===================================================================== */
+    const LABMC_ASSISTANT_CONFIG = {
+      // No Render ou servidor web, usa automaticamente '/api/chat'
+      endpoint: '/api/chat',
+      healthEndpoint: '/api/health',
+      // Opcional: chave direta apenas para testes locais sem servidor
+      geminiApiKey: '',
+      geminiModel: 'gemini-2.5-flash',
+      enableRemoteApi: true,
+      timeoutMs: 15000,
+      maxHistoryItems: 10
+    };
+
+    const SYSTEM_PROMPT = `Você é o Assistente Institucional e Técnico do Laboratório de Modelagem Computacional (LabMC) da Universidade Federal do Oeste do Pará (UFOPA). Responda em português do Brasil, de forma objetiva, acadêmica e cordial. Nunca use travessões longos (—) no texto; use vírgulas, parênteses ou dois-pontos. Dados oficiais: localizado no Bloco 26 da Unidade Tapajós (Santarém, PA), área de 36 m², vinculado ao Programa de Ciência e Tecnologia (PC&T) e ao Instituto de Engenharia e Geociências (IEG). Coordenador: Prof. Dr. Josecley Fialho Góes. Foco: Dinâmica dos Fluidos Computacional (DFC/CFD), processamento paralelo via API CUDA (NVIDIA), métodos numéricos e ciência de dados. Atendimento de segunda a sexta, das 08h00 às 18h00.`;
+
+    const chatHistory = [];
+    let isRemoteOnline = false;
+
+    function isLocalFileProtocol() {
+      return window.location.protocol === 'file:';
+    }
+
+    async function checkBackendAvailability() {
+      const badge = document.getElementById('chatModeBadge');
+      if (!badge) return;
+
+      if (LABMC_ASSISTANT_CONFIG.geminiApiKey && LABMC_ASSISTANT_CONFIG.geminiApiKey.trim() !== '') {
+        isRemoteOnline = true;
+        badge.textContent = 'API Gemini Conectada';
+        return;
+      }
+
+      if (!LABMC_ASSISTANT_CONFIG.enableRemoteApi || isLocalFileProtocol()) {
+        isRemoteOnline = false;
+        badge.textContent = 'Modo Local Offline';
+        return;
+      }
+
+      try {
+        const res = await fetch(LABMC_ASSISTANT_CONFIG.healthEndpoint);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ai_configured) {
+            isRemoteOnline = true;
+            badge.textContent = 'API Conectada (Render)';
+            return;
+          }
+        }
+      } catch (e) {
+        // Segue para modo local
+      }
+
+      isRemoteOnline = false;
+      badge.textContent = 'Modo Local Offline';
+    }
+
+    checkBackendAvailability();
+
+    /* =====================================================================
+       DADOS DO PORTAL LABMC
+       ===================================================================== */
+    const teamData = [
+      { name: 'Prof. Dr. Josecley Fialho Góes', role: 'Coordenador / Pesquisador', category: 'pesquisadores', area: 'CFD, Métodos Numéricos e GPU CUDA' },
+      { name: 'Corpo Docente Colaborador IEG', role: 'Pesquisadores Associados', category: 'pesquisadores', area: 'Modelagem Matemática e Engenharia Física' },
+      { name: 'Equipe Técnica de Laboratório', role: 'Suporte Técnico IEG', category: 'tecnicos', area: 'Administração Linux, Redes e Hardware GPU' },
+      { name: 'Monitores Voluntários e Bolsistas', role: 'Alunos de Graduação (PC&T)', category: 'graduacao', area: 'Apoio às Disciplinas de Programação e CFD' },
+      { name: 'Discentes de Iniciação Científica', role: 'Graduação (PIBIC / PIBITI)', category: 'graduacao', area: 'Simulação de Escoamentos e CUDA' },
+      { name: 'Discentes de Mestrado e Doutorado', role: 'Pós-Graduação', category: 'pos', area: 'Modelagem Computacional Aplicada na Amazônia' },
+      { name: 'Pesquisadores Egressos (PC&T / IEG)', role: 'Egressos LabMC', category: 'egressos', area: 'Engenharia, Ciência de Dados e Pós-Graduação' },
+      { name: 'Bolsistas de Extensão Tecnológica', role: 'Graduação', category: 'graduacao', area: 'Cursos de CFD e Machine Learning' }
+    ];
+
+    const projectsData = [
+      {
+        title: 'Simulação Numérica de Escoamentos em Dinâmica dos Fluidos Computacional (DFC)',
+        category: 'cfd',
+        tag: 'DFC / CFD',
+        summary: 'Desenvolvimento e validação de modelos numéricos para escoamentos laminares e turbulentos aplicados a problemas de engenharia na região amazônica.',
+        tools: ['OpenFOAM', 'ParaView', 'Volumes Finitos']
+      },
+      {
+        title: 'Aceleração de Solvers Numéricos em Arquitetura Paralela NVIDIA CUDA',
+        category: 'cuda',
+        tag: 'GPU CUDA',
+        summary: 'Implementação de algoritmos paralelos em C/C++ utilizando a API CUDA da NVIDIA para redução do tempo computacional em malhas de alta densidade.',
+        tools: ['C/C++', 'NVIDIA CUDA', 'Computação Paralela']
+      },
+      {
+        title: 'Métodos Computacionais Aplicados ao Ensino de Engenharia no PC&T',
+        category: 'cfd',
+        tag: 'ENSINO & MONITORIA',
+        summary: 'Produção de roteiros práticos, códigos-fonte didáticos e suporte computacional às disciplinas de programação e cálculo numérico do IEG.',
+        tools: ['Python', 'NumPy', 'SciPy']
+      },
+      {
+        title: 'Modelagem Preditiva e Aprendizado de Máquina para Dados Científicos',
+        category: 'ml',
+        tag: 'MACHINE LEARNING',
+        summary: 'Aplicação de técnicas de aprendizado de máquina e redes neurais para análise de séries temporais ambientais e redução de ordem de modelos físicos.',
+        tools: ['Python', 'Scikit-learn', 'PyTorch']
+      }
+    ];
+
+    const publicationsData = [
+      {
+        year: '2025',
+        type: 'Artigo em Periódico',
+        title: 'Parallel GPU Implementation of Navier-Stokes Solvers Using NVIDIA CUDA Architecture',
+        authors: 'GÓES, J. F. et al.',
+        venue: 'Revista de Modelagem Computacional e Engenharia Aplicada'
+      },
+      {
+        year: '2024',
+        type: 'Trabalho em Evento',
+        title: 'Análise Numérica de Escoamentos Internos via Método dos Volumes Finitos no Ambiente OpenFOAM',
+        authors: 'DISCENTES PC&T; GÓES, J. F.',
+        venue: 'Jornada Acadêmica da UFOPA (Santarém, PA)'
+      },
+      {
+        year: '2024',
+        type: 'Trabalho de Conclusão de Curso',
+        title: 'Otimização de Multiplicação de Matrizes Esparsas em GPU para Sistemas Lineares de Grande Porte',
+        authors: 'EGRESSO ENGENHARIA FÍSICA / PC&T',
+        venue: 'Instituto de Engenharia e Geociências, UFOPA'
+      },
+      {
+        year: '2023',
+        type: 'Material Didático',
+        title: 'Apostila Introdutória de Programação Científica e Métodos Numéricos para o PC&T',
+        authors: 'EQUIPE DE MONITORIA LABMC',
+        venue: 'Laboratório de Modelagem Computacional, UFOPA'
+      }
+    ];
+
+    const photoDetails = [
+      { title: 'Estações de Trabalho', desc: 'Bancadas equipadas com computadores dedicados à programação científica, compilação em C/C++ e execução de simulações em GPU NVIDIA CUDA no Bloco 26.' },
+      { title: 'Sala de Simulação (36 m²)', desc: 'Ambiente climatizado no Bloco 26 da Unidade Tapajós, projetado para acomodar discentes de iniciação científica, TCC e pesquisadores do IEG.' },
+      { title: 'Aulas Práticas e Monitoria', desc: 'Infraestrutura utilizada para atendimento presencial da monitoria do LabMC e aulas práticas das disciplinas do Programa de Ciência e Tecnologia (PC&T).' },
+      { title: 'Bloco 26, Unidade Tapajós', desc: 'Localização institucional do LabMC no Campus Santarém da Universidade Federal do Oeste do Pará (UFOPA).' }
+    ];
+
+    function renderTeam(filter = 'todos') {
+      const grid = document.getElementById('teamGrid');
+      const filtered = filter === 'todos' ? teamData : teamData.filter(m => m.category === filter);
+      grid.innerHTML = filtered.map(member => `
+        <div class="bg-white border border-lab-border p-4 rounded-[2px] flex flex-col justify-between">
+          <div>
+            <div class="text-[11px] font-mono text-lab-green font-medium uppercase">${member.role}</div>
+            <h4 class="text-sm font-bold text-black mt-1">${member.name}</h4>
+          </div>
+          <p class="text-xs text-zinc-600 mt-3 pt-3 border-t border-lab-border">${member.area}</p>
+        </div>
+      `).join('');
+    }
+
+    function filterTeam(category) {
+      document.querySelectorAll('.team-filter').forEach(btn => {
+        btn.classList.remove('bg-lab-green', 'text-white');
+        btn.classList.add('bg-white', 'text-zinc-700', 'border', 'border-lab-border');
+      });
+      event.target.classList.remove('bg-white', 'text-zinc-700', 'border', 'border-lab-border');
+      event.target.classList.add('bg-lab-green', 'text-white');
+      renderTeam(category);
+    }
+
+    function renderProjects(filter = 'todos') {
+      const grid = document.getElementById('projectsGrid');
+      const filtered = filter === 'todos' ? projectsData : projectsData.filter(p => p.category === filter);
+      grid.innerHTML = filtered.map(proj => `
+        <div class="border border-lab-border p-6 rounded-[2px] bg-lab-paper flex flex-col justify-between">
+          <div>
+            <div class="text-[11px] font-mono text-lab-green font-semibold">${proj.tag}</div>
+            <h3 class="text-base font-bold text-black mt-1.5 leading-snug">${proj.title}</h3>
+            <p class="text-xs text-zinc-600 mt-2.5 leading-relaxed">${proj.summary}</p>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mt-5 pt-4 border-t border-lab-border">
+            ${proj.tools.map(t => `<span class="px-2 py-0.5 bg-white border border-lab-border text-[11px] font-mono text-zinc-700 rounded-[2px]">${t}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterProjects(category) {
+      document.querySelectorAll('.proj-filter').forEach(btn => {
+        btn.classList.remove('bg-lab-green', 'text-white');
+        btn.classList.add('bg-lab-paper', 'text-zinc-700', 'border', 'border-lab-border');
+      });
+      event.target.classList.remove('bg-lab-paper', 'text-zinc-700', 'border', 'border-lab-border');
+      event.target.classList.add('bg-lab-green', 'text-white');
+      renderProjects(category);
+    }
+
+    function renderPublications() {
+      const query = (document.getElementById('pubSearch').value || '').toLowerCase();
+      const list = document.getElementById('publicationsList');
+      const filtered = publicationsData.filter(p =>
+        p.title.toLowerCase().includes(query) ||
+        p.authors.toLowerCase().includes(query) ||
+        p.year.includes(query)
+      );
+
+      if (filtered.length === 0) {
+        list.innerHTML = `<div class="p-6 text-xs text-zinc-500 font-mono">Nenhum registro encontrado para "${query}".</div>`;
+        return;
+      }
+
+      list.innerHTML = filtered.map((pub, idx) => `
+        <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-lab-paper transition-colors">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2 text-[11px] font-mono">
+              <span class="text-lab-green font-semibold">${pub.year}</span>
+              <span class="text-zinc-400">•</span>
+              <span class="text-zinc-600 uppercase">${pub.type}</span>
+            </div>
+            <h4 class="text-sm font-bold text-black">${pub.title}</h4>
+            <div class="text-xs text-zinc-600">${pub.authors} (${pub.venue})</div>
+          </div>
+          <button onclick="copyCitation(${idx})" class="shrink-0 px-3 py-1.5 bg-white hover:bg-lab-surface border border-lab-borderStrong text-[11px] font-mono text-black rounded-[2px] transition-colors">
+            Copiar Citação
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function copyCitation(idx) {
+      const pub = publicationsData[idx];
+      const citation = `${pub.authors} ${pub.title}. ${pub.venue}, ${pub.year}.`;
+      navigator.clipboard?.writeText(citation);
+      openInfoModal('Citação Copiada (Formato ABNT)', citation);
+    }
+
+    function switchInfraTab(tabName) {
+      document.querySelectorAll('.infra-tab').forEach(btn => {
+        btn.classList.remove('bg-lab-green', 'text-white');
+        btn.classList.add('text-zinc-700');
+      });
+      const activeBtn = document.getElementById(`tab-${tabName}`);
+      activeBtn.classList.add('bg-lab-green', 'text-white');
+      activeBtn.classList.remove('text-zinc-700');
+
+      document.querySelectorAll('.infra-panel').forEach(panel => panel.classList.add('hidden'));
+      document.getElementById(`panel-${tabName}`).classList.remove('hidden');
+    }
+
+    function openInfoModal(title, body, tag = 'INFORMAÇÃO INSTITUCIONAL') {
+      document.getElementById('modalTag').textContent = tag;
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalBody').textContent = body;
+      document.getElementById('infoModal').classList.remove('hidden');
+    }
+
+    function closeInfoModal() {
+      document.getElementById('infoModal').classList.add('hidden');
+    }
+
+    function openPhotoModal(idx) {
+      const item = photoDetails[idx];
+      openInfoModal(item.title, item.desc, 'REGISTRO DO ESPAÇO FÍSICO');
+    }
+
+    function openDocModal(title, desc) {
+      openInfoModal(title, desc, 'DOCUMENTAÇÃO LABMC');
+    }
+
+    function openEventModal(title, desc) {
+      openInfoModal(title, desc, 'EVENTO / OPORTUNIDADE');
+    }
+
+    function handleBookingSubmit(e) {
+      e.preventDefault();
+      const fb = document.getElementById('bookingFeedback');
+      fb.textContent = 'Solicitação registrada com sucesso. A coordenação do LabMC analisará a disponibilidade de bancada no Bloco 26.';
+      fb.classList.remove('hidden');
+      e.target.reset();
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const fb = document.getElementById('contactFeedback');
+      fb.textContent = 'Mensagem enviada à coordenação do Laboratório de Modelagem Computacional (UFOPA).';
+      fb.classList.remove('hidden');
+      e.target.reset();
+    }
+
+    /* =====================================================================
+       ASSISTENTE VIRTUAL (BACKEND FASTAPI / GEMINI + BASE LOCAL INTELIGENTE)
+       ===================================================================== */
+    function toggleChat() {
+      const win = document.getElementById('chatWindow');
+      win.classList.toggle('hidden');
+      if (!win.classList.contains('hidden')) {
+        document.getElementById('chatInput').focus();
+      }
+    }
+
+    function clearChatHistory() {
+      chatHistory.length = 0;
+      const box = document.getElementById('chatMessages');
+      box.innerHTML = `
+        <div class="bg-white border border-lab-border p-3 rounded-[2px] text-zinc-800 leading-relaxed">
+          Histórico reiniciado. Como posso auxiliar com informações sobre o <strong class="text-black">LabMC (UFOPA)</strong> ou temas técnicos de modelagem computacional?
+        </div>
+      `;
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatAssistantText(rawText) {
+      let safe = escapeHtml(rawText);
+      safe = safe.replace(/```([\s\S]*?)```/g, '<pre class="my-2 p-2.5 bg-zinc-900 text-zinc-100 font-mono text-[11px] rounded-[2px] overflow-x-auto">$1</pre>');
+      safe = safe.replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 bg-lab-surface border border-lab-border font-mono text-[11px] text-black rounded-[2px]">$1</code>');
+      safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold text-black">$1</strong>');
+      safe = safe.replace(/\n/g, '<br>');
+      return safe;
+    }
+
+    function appendChatMessage(text, sender, meta = null) {
+      const box = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+
+      if (sender === 'user') {
+        div.className = 'ml-8 bg-lab-green text-white p-3 rounded-[2px] leading-relaxed';
+        div.textContent = text;
+      } else {
+        div.className = 'mr-4 bg-white border border-lab-border p-3 rounded-[2px] text-zinc-800 leading-relaxed space-y-2';
+        let html = `<div>${formatAssistantText(text)}</div>`;
+        if (meta && meta.actionLabel && meta.actionHref) {
+          html += `<div><a href="${meta.actionHref}" onclick="toggleChat()" class="inline-flex items-center gap-1 text-[11px] font-mono font-medium text-lab-green hover:underline">${escapeHtml(meta.actionLabel)} →</a></div>`;
+        }
+        if (meta && meta.source) {
+          html += `<div class="pt-1.5 border-t border-lab-border text-[10px] font-mono text-zinc-400">Fonte: ${escapeHtml(meta.source)}</div>`;
+        }
+        div.innerHTML = html;
+      }
+
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      const box = document.getElementById('chatMessages');
+      const id = 'typing-' + Date.now();
+      const div = document.createElement('div');
+      div.id = id;
+      div.className = 'mr-8 bg-white border border-lab-border p-3 rounded-[2px] flex items-center gap-1.5';
+      div.innerHTML = `
+        <span class="w-1.5 h-1.5 bg-lab-green rounded-full typing-dot"></span>
+        <span class="w-1.5 h-1.5 bg-lab-green rounded-full typing-dot"></span>
+        <span class="w-1.5 h-1.5 bg-lab-green rounded-full typing-dot"></span>
+        <span class="text-[11px] font-mono text-zinc-500 ml-1">Processando...</span>
+      `;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+      return id;
+    }
+
+    function removeTypingIndicator(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    function normalizeText(str) {
+      return str
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function getLocalKnowledgeReply(question) {
+      const q = normalizeText(question);
+
+      const intents = [
+        {
+          keywords: ['funciona', 'funcionamento', 'o que e', 'sobre o lab', 'objetivo', 'finalidade', 'atividades', 'fazem', 'serve'],
+          answer: 'O **LabMC** (Laboratório de Modelagem Computacional) é uma unidade de ensino, pesquisa e extensão vinculada ao **PC&T** e ao **IEG (UFOPA)**.\n\n**Como funciona na prática:**\n• **Ensino e Monitoria:** Apoia disciplinas de programação e métodos numéricos com atendimento presencial de segunda a sexta (08h00 às 18h00).\n• **Pesquisa Aplicada:** Desenvolve simulações em Dinâmica dos Fluidos Computacional (CFD) e computação paralela em GPU (NVIDIA CUDA).\n• **Extensão:** Oferta cursos abertos (como CFD e Machine Learning) e orienta projetos de Iniciação Científica e TCC.',
+          actionLabel: 'Conhecer o laboratório',
+          actionHref: '#sobre'
+        },
+        {
+          keywords: ['quem pode', 'participar', 'entrar', 'acesso', 'aluno', 'discente', 'preciso ser'],
+          answer: 'Podem utilizar o LabMC discentes de graduação (especialmente do **PC&T**, Engenharia Física e cursos do **IEG**), alunos de pós-graduação e docentes pesquisadores.\n\nO acesso ocorre por meio de disciplinas práticas, atendimento de monitoria, participação em editais de seleção ou solicitação de bancada para TCC e Iniciação Científica.',
+          actionLabel: 'Solicitar acesso',
+          actionHref: '#infraestrutura'
+        },
+        {
+          keywords: ['onde', 'local', 'bloco', 'endereco', 'tapajos', 'santarem', 'sala', 'mapa', 'horario'],
+          answer: 'O LabMC está localizado no **Bloco 26 da Unidade Tapajós** (Campus Santarém da UFOPA), ocupando uma área de **36 m²**.\n\nO funcionamento regular ocorre de **segunda a sexta-feira, das 08h00 às 18h00**, com escalas de monitoria e pesquisa.',
+          actionLabel: 'Ver localização e agenda',
+          actionHref: '#sobre'
+        },
+        {
+          keywords: ['bancada', 'reservar', 'reserva', 'agendar', 'agendamento', 'usar computador', 'tcc', 'iniciacao'],
+          answer: 'Para reservar uma estação de trabalho para TCC, Iniciação Científica (PIBIC/PIBITI) ou pesquisa, preencha o formulário na aba **Solicitar Bancada** (seção Infraestrutura), informe seu curso e recurso desejado, e apresente o **Termo de Responsabilidade** assinado.',
+          actionLabel: 'Ir para Solicitar Bancada',
+          actionHref: '#infraestrutura'
+        },
+        {
+          keywords: ['cuda', 'gpu', 'nvidia', 'equipamento', 'computador', 'hardware', 'linux', 'software', 'openfoam'],
+          answer: 'O laboratório dispõe de **estações de trabalho equipadas com GPUs NVIDIA (arquitetura CUDA)** e bancadas em ambiente **Ubuntu Linux**.\n\n**Softwares instalados:** CUDA Toolkit (NVCC), GCC/G++, OpenFOAM, ParaView, Gmsh e stack Python científica (NumPy, SciPy, Scikit-learn, PyTorch e Jupyter).',
+          actionLabel: 'Ver tabela de equipamentos',
+          actionHref: '#infraestrutura'
+        },
+        {
+          keywords: ['cfd', 'fluidos', 'dinamica', 'navier', 'malha', 'simulacao', 'escoamento'],
+          answer: 'A **Dinâmica dos Fluidos Computacional (DFC/CFD)** é uma das linhas centrais do LabMC. Trabalhamos com discretização de malhas, Método dos Volumes Finitos, resolução numérica das equações de Navier-Stokes no OpenFOAM e aceleração de solvers em GPU.',
+          actionLabel: 'Ver projetos em CFD',
+          actionHref: '#projetos'
+        },
+        {
+          keywords: ['monitoria', 'edital', 'bolsa', 'selecao', 'vaga'],
+          answer: 'O **Edital de Monitoria do LabMC** seleciona discentes para auxiliar nas disciplinas de programação e métodos computacionais do PC&T e IEG, além de apoiar oficinas de extensão no Bloco 26.',
+          actionLabel: 'Ver editais e eventos',
+          actionHref: '#eventos'
+        },
+        {
+          keywords: ['curso', 'machine learning', 'extensao', 'capacitacao', 'inscricao'],
+          answer: 'O laboratório promove capacitações periódicas, com destaque para o **Curso Online em Dinâmica dos Fluidos (CFD)** e o **Curso de Machine Learning** aplicado a dados científicos e de engenharia.',
+          actionLabel: 'Conferir cursos ativos',
+          actionHref: '#eventos'
+        },
+        {
+          keywords: ['regimento', 'manual', 'documento', 'termo', 'norma', 'regra'],
+          answer: 'Na aba **Regimento & Manuais** (seção Infraestrutura) você pode consultar o **Regimento Interno do LabMC**, o **Manual de Utilização e Ambiente CUDA** e o **Termo de Responsabilidade**.',
+          actionLabel: 'Acessar documentos',
+          actionHref: '#infraestrutura'
+        },
+        {
+          keywords: ['coordenador', 'josecley', 'equipe', 'professor', 'contato', 'instagram', 'email'],
+          answer: 'A coordenação do LabMC é exercida pelo **Prof. Dr. Josecley Fialho Góes** (IEG / UFOPA). Você pode entrar em contato pelo formulário institucional nesta página ou acompanhar as divulgações no Instagram oficial **@labmc.ufopa**.',
+          actionLabel: 'Ir para Contato',
+          actionHref: '#contato'
+        },
+        {
+          keywords: ['projeto', 'pesquisa', 'artigo', 'publicacao', 'producao', 'citacao'],
+          answer: 'O LabMC desenvolve projetos em **CFD**, **computação paralela CUDA**, **métodos computacionais para o PC&T** e **Machine Learning**. Na seção **Produções**, é possível filtrar artigos e TCCs e copiar a citação no formato ABNT.',
+          actionLabel: 'Explorar Projetos e Produções',
+          actionHref: '#projetos'
+        }
+      ];
+
+      let bestMatch = null;
+      let bestScore = 0;
+
+      for (const intent of intents) {
+        let score = 0;
+        for (const kw of intent.keywords) {
+          if (q.includes(kw)) {
+            score += kw.length > 5 ? 2 : 1;
+          }
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          bestMatch = intent;
+        }
+      }
+
+      if (bestMatch && bestScore > 0) {
+        return {
+          text: bestMatch.answer,
+          meta: {
+            source: 'Base Institucional LabMC',
+            actionLabel: bestMatch.actionLabel,
+            actionHref: bestMatch.actionHref
+          }
+        };
+      }
+
+      return {
+        text: 'Posso ajudar com informações sobre **como funciona o LabMC**, **localização no Bloco 26**, **reserva de bancadas**, **equipamentos NVIDIA CUDA**, **editais de monitoria**, **cursos de CFD e Machine Learning** ou **contato com a coordenação**.',
+        meta: {
+          source: 'Base Institucional LabMC',
+          actionLabel: 'Enviar mensagem à coordenação',
+          actionHref: '#contato'
+        }
+      };
+    }
+
+    async function queryRemoteAssistant(userMessage) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), LABMC_ASSISTANT_CONFIG.timeoutMs);
+
+      try {
+        if (LABMC_ASSISTANT_CONFIG.geminiApiKey && LABMC_ASSISTANT_CONFIG.geminiApiKey.trim() !== '') {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${LABMC_ASSISTANT_CONFIG.geminiModel}:generateContent?key=${encodeURIComponent(LABMC_ASSISTANT_CONFIG.geminiApiKey.trim())}`;
+          const contents = [
+            ...chatHistory.slice(-LABMC_ASSISTANT_CONFIG.maxHistoryItems).map(item => ({
+              role: item.role === 'user' ? 'user' : 'model',
+              parts: [{ text: item.text }]
+            })),
+            { role: 'user', parts: [{ text: userMessage }] }
+          ];
+
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal,
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+              contents,
+              generationConfig: { temperature: 0.35, maxOutputTokens: 800 }
+            })
+          });
+
+          clearTimeout(timeoutId);
+          if (!res.ok) throw new Error('Falha na API Gemini');
+          const data = await res.json();
+          const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (!reply) throw new Error('Resposta vazia');
+          return { text: reply, source: 'API Gemini' };
+        }
+
+        if (!LABMC_ASSISTANT_CONFIG.enableRemoteApi || isLocalFileProtocol()) {
+          clearTimeout(timeoutId);
+          return null;
+        }
+
+        const response = await fetch(LABMC_ASSISTANT_CONFIG.endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            message: userMessage,
+            history: chatHistory.slice(-LABMC_ASSISTANT_CONFIG.maxHistoryItems)
+          })
+        });
+
+        clearTimeout(timeoutId);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        if (!data || !data.reply) throw new Error('Resposta inválida');
+
+        isRemoteOnline = true;
+        document.getElementById('chatModeBadge').textContent = 'API Conectada (Render)';
+        return { text: data.reply, source: 'Assistente IA LabMC' };
+      } catch (err) {
+        clearTimeout(timeoutId);
+        return null;
+      }
+    }
+
+    async function processUserMessage(text) {
+      const cleanText = text.trim();
+      if (!cleanText) return;
+
+      const input = document.getElementById('chatInput');
+      const sendBtn = document.getElementById('chatSendBtn');
+      input.disabled = true;
+      sendBtn.disabled = true;
+
+      appendChatMessage(cleanText, 'user');
+      const typingId = showTypingIndicator();
+
+      const remoteResponse = await queryRemoteAssistant(cleanText);
+      removeTypingIndicator(typingId);
+
+      if (remoteResponse) {
+        appendChatMessage(remoteResponse.text, 'bot', { source: remoteResponse.source });
+        chatHistory.push({ role: 'user', text: cleanText });
+        chatHistory.push({ role: 'model', text: remoteResponse.text });
+      } else {
+        const localResponse = getLocalKnowledgeReply(cleanText);
+        appendChatMessage(localResponse.text, 'bot', localResponse.meta);
+        chatHistory.push({ role: 'user', text: cleanText });
+        chatHistory.push({ role: 'model', text: localResponse.text });
+      }
+
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+
+    function sendQuickQuestion(q) {
+      processUserMessage(q);
+    }
+
+    function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value;
+      input.value = '';
+      processUserMessage(text);
+    }
+
+    /* =====================================================================
+       BANCADA NUMÉRICA INTERATIVA (CANVAS)
+       ===================================================================== */
+    const canvas = document.getElementById('labCanvas');
+    const ctx = canvas.getContext('2d');
+    let simMode = 'cfd';
+    let width, height;
+    let pointer = { x: -999, y: -999, active: false };
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      width = canvas.width = rect.width;
+      height = canvas.height = rect.height;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    canvas.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = e.clientX - rect.left;
+      pointer.y = e.clientY - rect.top;
+      pointer.active = true;
+    });
+    canvas.addEventListener('mouseleave', () => { pointer.active = false; });
+
+    function setSimMode(mode) {
+      simMode = mode;
+      document.querySelectorAll('.sim-btn').forEach(btn => {
+        btn.classList.remove('bg-lab-green', 'text-white');
+        btn.classList.add('bg-white', 'text-zinc-700', 'border', 'border-lab-border');
+      });
+      const active = document.getElementById(`btn-${mode}`);
+      active.classList.remove('bg-white', 'text-zinc-700', 'border', 'border-lab-border');
+      active.classList.add('bg-lab-green', 'text-white');
+
+      const status = document.getElementById('simStatusText');
+      const tel = document.getElementById('simTelemetry');
+      if (mode === 'cfd') {
+        status.textContent = 'Modo: Escoamento laminar em torno de obstáculo (mova o cursor)';
+        tel.textContent = 'NÓS: 420 | 60 FPS';
+      } else if (mode === 'cuda') {
+        status.textContent = 'Modo: Grade de threads e blocos paralelos NVIDIA CUDA';
+        tel.textContent = 'THREADS: 256 | GPU';
+      } else {
+        status.textContent = 'Modo: Malha estrutural deformável (Elementos Finitos)';
+        tel.textContent = 'MALHA: 18x10 | FEM';
+      }
+    }
+
+    const particles = Array.from({ length: 140 }, () => ({
+      x: Math.random() * 600,
+      y: Math.random() * 340,
+      vx: 1.6 + Math.random() * 1.2,
+      vy: 0
+    }));
+
+    let time = 0;
+    function animateCanvas() {
+      time += 0.03;
+      ctx.clearRect(0, 0, width, height);
+
+      if (simMode === 'cfd') {
+        const obsX = pointer.active ? pointer.x : width * 0.42;
+        const obsY = pointer.active ? pointer.y : height * 0.5;
+        const obsR = 26;
+
+        ctx.beginPath();
+        ctx.arc(obsX, obsY, obsR, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = '#000000';
+        ctx.stroke();
+
+        particles.forEach(p => {
+          const dx = p.x - obsX;
+          const dy = p.y - obsY;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist < obsR + 38 && dist > 1) {
+            const force = (obsR + 38 - dist) / (obsR + 38);
+            p.vy += (dy / dist) * force * 0.85;
+            p.vx += (dx / dist) * force * 0.25;
+          }
+
+          p.vx += (2.1 - p.vx) * 0.05;
+          p.vy *= 0.92;
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x > width) {
+            p.x = 0;
+            p.y = Math.random() * height;
+          }
+          if (p.y < 0) p.y = height;
+          if (p.y > height) p.y = 0;
+
+          ctx.beginPath();
+          ctx.moveTo(p.x - p.vx * 4, p.y - p.vy * 4);
+          ctx.lineTo(p.x, p.y);
+          ctx.strokeStyle = dist < obsR + 55 ? '#38761d' : '#52525b';
+          ctx.lineWidth = dist < obsR + 55 ? 1.6 : 1;
+          ctx.stroke();
+        });
+      } else if (simMode === 'cuda') {
+        const cols = 16;
+        const rows = 9;
+        const padX = 36;
+        const padY = 32;
+        const cellW = (width - padX * 2) / cols;
+        const cellH = (height - padY * 2) / rows;
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const x = padX + c * cellW + 3;
+            const y = padY + r * cellH + 3;
+            const w = cellW - 6;
+            const h = cellH - 6;
+            const cx = x + w / 2;
+            const cy = y + h / 2;
+
+            const dist = pointer.active ? Math.hypot(cx - pointer.x, cy - pointer.y) : 999;
+            const wave = Math.sin(time * 2 - (c * 0.4 + r * 0.3)) > 0.65;
+            const active = dist < 75 || wave;
+
+            ctx.fillStyle = active ? '#38761d' : '#ffffff';
+            ctx.fillRect(x, y, w, h);
+            ctx.strokeStyle = active ? '#2b5c16' : '#d4d4d8';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, w, h);
+          }
+        }
+      } else if (simMode === 'mesh') {
+        const cols = 16;
+        const rows = 9;
+        const stepX = width / (cols - 1);
+        const stepY = height / (rows - 1);
+        const pts = [];
+
+        for (let r = 0; r < rows; r++) {
+          pts[r] = [];
+          for (let c = 0; c < cols; c++) {
+            let bx = c * stepX;
+            let by = r * stepY;
+            const waveY = Math.sin(time + c * 0.45) * 5;
+            by += waveY;
+
+            if (pointer.active && r > 0 && r < rows - 1 && c > 0 && c < cols - 1) {
+              const dx = bx - pointer.x;
+              const dy = by - pointer.y;
+              const dist = Math.hypot(dx, dy);
+              if (dist < 90) {
+                const push = (90 - dist) / 90;
+                bx += (dx / (dist || 1)) * push * 18;
+                by += (dy / (dist || 1)) * push * 18;
+              }
+            }
+            pts[r][c] = { x: bx, y: by };
+          }
+        }
+
+        ctx.strokeStyle = '#a1a1aa';
+        ctx.lineWidth = 1;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            if (c < cols - 1) {
+              ctx.beginPath();
+              ctx.moveTo(pts[r][c].x, pts[r][c].y);
+              ctx.lineTo(pts[r][c + 1].x, pts[r][c + 1].y);
+              ctx.stroke();
+            }
+            if (r < rows - 1) {
+              ctx.beginPath();
+              ctx.moveTo(pts[r][c].x, pts[r][c].y);
+              ctx.lineTo(pts[r + 1][c].x, pts[r + 1][c].y);
+              ctx.stroke();
+            }
+            ctx.fillStyle = '#38761d';
+            ctx.fillRect(pts[r][c].x - 2, pts[r][c].y - 2, 4, 4);
+          }
+        }
+      }
+
+      requestAnimationFrame(animateCanvas);
+    }
+    animateCanvas();
+
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    });
+
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 10) nav.classList.add('nav-scrolled');
+      else nav.classList.remove('nav-scrolled');
+    });
+
+    renderTeam();
+    renderProjects();
+    renderPublications();
+  </script>
+</body>
+</html>

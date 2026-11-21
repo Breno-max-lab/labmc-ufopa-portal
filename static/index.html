@@ -280,12 +280,12 @@
             </div>
 
             <div class="relative h-[300px] sm:h-[340px] w-full sim-canvas-bg">
-              <canvas id="labCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+              <canvas id="labCanvas" class="w-full h-full block cursor-crosshair touch-none"></canvas>
             </div>
 
             <div class="px-4 py-2.5 bg-white border-t border-lab-border flex items-center justify-between text-[11px] font-mono text-lab-muted">
-              <span id="simStatusText">Modo: Escoamento laminar em torno de obstáculo (mova o cursor)</span>
-              <span id="simTelemetry" class="text-black font-medium">NÓS: 420 | 60 FPS</span>
+              <span id="simStatusText">Modo: Escoamento laminar em torno de obstáculo (mova o cursor ou toque)</span>
+              <span id="simTelemetry" class="text-black font-medium shrink-0 ml-2">NÓS: 420 | 60 FPS</span>
             </div>
           </div>
         </div>
@@ -803,9 +803,6 @@
       </div>
       <div class="flex flex-col sm:items-end gap-1.5 text-xs font-mono text-zinc-400">
         <span>Bloco 26, Unidade Tapajós • Santarém, PA</span>
-        <a href="/admin" class="text-zinc-500 hover:text-zinc-300 underline underline-offset-2 transition-colors">
-          Área Administrativa
-        </a>
       </div>
     </div>
   </footer>
@@ -839,7 +836,7 @@
           <i data-lucide="terminal" class="w-4 h-4"></i>
           <div>
             <div class="text-xs font-bold leading-none">Assistente LabMC</div>
-            <div id="chatModeBadge" class="text-[10px] font-mono text-zinc-100 mt-0.5">Verificando conexão...</div>
+            <div id="chatModeBadge" class="text-[10px] font-mono text-zinc-100 mt-0.5">Online • Assistente Institucional</div>
           </div>
         </div>
         <div class="flex items-center gap-1">
@@ -891,7 +888,7 @@
     lucide.createIcons();
 
     /* =====================================================================
-       CONFIGURAÇÃO DO ASSISTENTE (BACKEND FASTAPI / RENDER + FALLBACK LOCAL)
+       CONFIGURAÇÃO DO ASSISTENTE (BACKEND FASTAPI + FALLBACK LOCAL)
        ===================================================================== */
     const LABMC_ASSISTANT_CONFIG = {
       endpoint: '/api/chat',
@@ -918,13 +915,13 @@
 
       if (LABMC_ASSISTANT_CONFIG.geminiApiKey && LABMC_ASSISTANT_CONFIG.geminiApiKey.trim() !== '') {
         isRemoteOnline = true;
-        badge.textContent = 'API Gemini Conectada';
+        badge.textContent = 'Online • Assistente Institucional';
         return;
       }
 
       if (!LABMC_ASSISTANT_CONFIG.enableRemoteApi || isLocalFileProtocol()) {
         isRemoteOnline = false;
-        badge.textContent = 'Modo Local Offline';
+        badge.textContent = 'Modo Consulta Local';
         return;
       }
 
@@ -934,7 +931,7 @@
           const data = await res.json();
           if (data.ai_configured) {
             isRemoteOnline = true;
-            badge.textContent = 'API Conectada (Render)';
+            badge.textContent = 'Online • Assistente Institucional';
             return;
           }
         }
@@ -943,7 +940,7 @@
       }
 
       isRemoteOnline = false;
-      badge.textContent = 'Modo Local Offline';
+      badge.textContent = 'Modo Consulta Local';
     }
 
     checkBackendAvailability();
@@ -1477,7 +1474,7 @@
     }
 
     /* =====================================================================
-       ASSISTENTE VIRTUAL (BACKEND FASTAPI / GEMINI + BASE LOCAL INTELIGENTE)
+       ASSISTENTE VIRTUAL (BACKEND FASTAPI + BASE LOCAL INTELIGENTE)
        ===================================================================== */
     function toggleChat() {
       const win = document.getElementById('chatWindow');
@@ -1594,7 +1591,7 @@
         },
         {
           keywords: ['maquina', 'pc', 'reservar', 'reserva', 'agendar', 'agendamento', 'usar computador', 'tcc', 'iniciacao', 'evento', 'reuniao', 'aula', 'espaco'],
-          answer: 'Na aba **Solicitar Máquina / Espaço** (seção Infraestrutura), você pode registrar tanto uma **Solicitação de Máquina (PC/GPU)** quanto uma **Solicitação de Espaço do Laboratório** para eventos, aulas práticas, reuniões ou outras atividades acadêmicas.\n\nO pedido gera um protocolo imediato e passa pela aprovação da coordenação no painel administrativo.',
+          answer: 'Na aba **Solicitar Máquina / Espaço** (seção Infraestrutura), você pode registrar tanto uma **Solicitação de Máquina (PC/GPU)** quanto uma **Solicitação de Espaço do Laboratório** para eventos, aulas práticas, reuniões ou outras atividades acadêmicas.\n\nO pedido gera um protocolo imediato e passa pela aprovação da coordenação.',
           actionLabel: 'Ir para Solicitar Máquina / Espaço',
           actionHref: '#infraestrutura'
         },
@@ -1706,11 +1703,11 @@
           });
 
           clearTimeout(timeoutId);
-          if (!res.ok) throw new Error('Falha na API Gemini');
+          if (!res.ok) throw new Error('Falha na API');
           const data = await res.json();
           const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
           if (!reply) throw new Error('Resposta vazia');
-          return { text: reply, source: 'API Gemini' };
+          return { text: reply, source: 'Assistente IA LabMC' };
         }
 
         if (!LABMC_ASSISTANT_CONFIG.enableRemoteApi || isLocalFileProtocol()) {
@@ -1734,7 +1731,7 @@
         if (!data || !data.reply) throw new Error('Resposta inválida');
 
         isRemoteOnline = true;
-        document.getElementById('chatModeBadge').textContent = 'API Conectada (Render)';
+        document.getElementById('chatModeBadge').textContent = 'Online • Assistente Institucional';
         const fontLabel = Array.isArray(data.sources_used) && data.sources_used.length > 0
           ? `Assistente IA LabMC (${data.sources_used.join(', ')})`
           : 'Assistente IA LabMC';
@@ -1789,7 +1786,7 @@
     }
 
     /* =====================================================================
-       BANCADA NUMÉRICA INTERATIVA (CANVAS)
+       BANCADA NUMÉRICA INTERATIVA (MOUSE + TOUCH MOBILE)
        ===================================================================== */
     const canvas = document.getElementById('labCanvas');
     const ctx = canvas.getContext('2d');
@@ -1813,6 +1810,29 @@
     });
     canvas.addEventListener('mouseleave', () => { pointer.active = false; });
 
+    function updatePointerFromTouch(e) {
+      if (e.touches && e.touches.length > 0) {
+        const rect = canvas.getBoundingClientRect();
+        pointer.x = e.touches[0].clientX - rect.left;
+        pointer.y = e.touches[0].clientY - rect.top;
+        pointer.active = true;
+      }
+    }
+
+    canvas.addEventListener('touchstart', e => {
+      e.preventDefault();
+      updatePointerFromTouch(e);
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      updatePointerFromTouch(e);
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', () => {
+      pointer.active = false;
+    });
+
     function setSimMode(mode) {
       simMode = mode;
       document.querySelectorAll('.sim-btn').forEach(btn => {
@@ -1826,7 +1846,7 @@
       const status = document.getElementById('simStatusText');
       const tel = document.getElementById('simTelemetry');
       if (mode === 'cfd') {
-        status.textContent = 'Modo: Escoamento laminar em torno de obstáculo (mova o cursor)';
+        status.textContent = 'Modo: Escoamento laminar em torno de obstáculo (mova o cursor ou toque)';
         tel.textContent = 'NÓS: 420 | 60 FPS';
       } else if (mode === 'cuda') {
         status.textContent = 'Modo: Grade de threads e blocos paralelos NVIDIA CUDA';

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administração | LabMC - UFOPA</title>
+  <link rel="icon" type="image/jpeg" href="/static/assets/logo-labmc.jpg" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          },
+          colors: {
+            lab: {
+              green: '#38761d',
+              greenDark: '#2b5c16',
+              greenLight: '#eef5eb',
+              greenBorder: '#c5d9bd',
+              paper: '#fafafa',
+              surface: '#f4f4f5',
+              border: '#e4e4e7',
+              borderStrong: '#d4d4d8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-lab-paper text-black font-sans antialiased">
+
+  <!-- Barra Superior -->
+  <header class="bg-white border-b border-lab-border">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="/static/assets/logo-labmc.jpg" alt="LabMC" class="h-10 w-auto object-contain" />
+        <span class="text-xs font-mono px-2 py-0.5 bg-black text-white rounded-[2px]">PAINEL ADMIN</span>
+      </div>
+      <div class="flex items-center gap-4 text-xs font-mono">
+        <a href="/" class="text-zinc-700 hover:text-black underline">← Voltar ao Portal</a>
+        <button id="logoutBtn" onclick="logoutAdmin()" class="hidden text-red-700 hover:underline">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tela de Login -->
+  <main id="loginSection" class="max-w-md mx-auto px-4 py-20">
+    <div class="bg-white border border-lab-border p-8 rounded-[2px]">
+      <div class="text-[11px] font-mono text-lab-green font-semibold uppercase">Acesso Restrito</div>
+      <h1 class="text-xl font-bold mt-1">Coordenação e Monitoria LabMC</h1>
+      <p class="text-xs text-zinc-600 mt-2 leading-relaxed">
+        Insira a senha administrativa para enviar documentos PDF ao assistente virtual, publicar editais ou atualizar avisos do portal.
+      </p>
+
+      <form onsubmit="handleAdminLogin(event)" class="mt-6 space-y-4">
+        <div>
+          <label class="block text-xs font-medium mb-1">Senha Administrativa</label>
+          <input id="adminPasswordInput" type="password" required placeholder="••••••••" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-sm focus:outline-none focus:border-lab-green" />
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px] transition-colors">
+          Entrar no Painel
+        </button>
+      </form>
+      <div id="loginError" class="hidden mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-mono rounded-[2px]"></div>
+    </div>
+  </main>
+
+  <!-- Painel Principal -->
+  <main id="dashboardSection" class="hidden max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-10">
+
+    <!-- Status Geral -->
+    <div class="bg-white border border-lab-border p-5 rounded-[2px] flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h2 class="text-base font-bold">Base de Conhecimento do Assistente &amp; Portal</h2>
+        <p class="text-xs text-zinc-600 mt-0.5">Todo arquivo enviado aqui é indexado imediatamente para o Assistente IA responder aos alunos.</p>
+      </div>
+      <div class="flex items-center gap-4 text-xs font-mono">
+        <span id="statusAiBadge" class="px-2.5 py-1 bg-lab-greenLight border border-lab-greenBorder text-lab-green rounded-[2px]">Verificando IA...</span>
+        <span id="statusDocsCount" class="px-2.5 py-1 bg-lab-surface border border-lab-border text-black rounded-[2px]">0 documentos</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Upload de Documentos (PDF / MD / TXT) -->
+      <div class="lg:col-span-6 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
+        <div class="border-b border-lab-border pb-3">
+          <div class="text-[11px] font-mono text-lab-green font-semibold">1. BASE DO ASSISTENTE &amp; DOWNLOADS</div>
+          <h3 class="text-base font-bold mt-0.5">Enviar Documento (PDF, MD ou TXT)</h3>
+        </div>
+
+        <form id="uploadForm" onsubmit="handleDocUpload(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium mb-1">Arquivo Oficial (.pdf, .md, .txt)</label>
+            <input id="docFile" type="file" accept=".pdf,.md,.txt" required class="w-full text-xs text-zinc-700 file:mr-3 file:py-2 file:px-3 file:rounded-[2px] file:border-0 file:text-xs file:font-mono file:bg-lab-surface file:text-black hover:file:bg-zinc-200 border border-lab-borderStrong rounded-[2px] p-1" />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Título no Portal</label>
+              <input id="docTitle" type="text" placeholder="Ex: Edital Monitoria 2026.2" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs focus:outline-none focus:border-lab-green" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Categoria</label>
+              <input id="docTag" type="text" value="EDITAL / NORMA" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs font-mono focus:outline-none focus:border-lab-green" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Resumo Curto</label>
+            <textarea id="docDesc" rows="2" placeholder="Breve descrição exibida na aba Regimento & Manuais..." class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs focus:outline-none focus:border-lab-green"></textarea>
+          </div>
+          <label class="flex items-center gap-2 text-xs text-zinc-700 cursor-pointer">
+            <input id="docAddPortal" type="checkbox" checked class="accent-lab-green" />
+            <span>Exibir também para download na aba "Regimento &amp; Manuais" do site</span>
+          </label>
+          <button type="submit" class="px-4 py-2 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px] transition-colors">
+            Enviar e Indexar Documento
+          </button>
+        </form>
+        <div id="uploadFeedback" class="hidden p-3 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono rounded-[2px]"></div>
+
+        <!-- Lista de Arquivos Indexados -->
+        <div class="pt-4 border-t border-lab-border">
+          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">ARQUIVOS ATIVOS NA PASTA DE CONHECIMENTO:</h4>
+          <div id="indexedFilesList" class="divide-y divide-lab-border border border-lab-border rounded-[2px] text-xs"></div>
+        </div>
+      </div>
+
+      <!-- Publicar Edital / Evento no Mural -->
+      <div class="lg:col-span-6 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
+        <div class="border-b border-lab-border pb-3">
+          <div class="text-[11px] font-mono text-lab-green font-semibold">2. MURAL DE OPORTUNIDADES</div>
+          <h3 class="text-base font-bold mt-0.5">Publicar Edital, Curso ou Evento</h3>
+        </div>
+
+        <form id="eventForm" onsubmit="handleEventCreate(event)" class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Selo (Badge)</label>
+              <select id="evBadge" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs">
+                <option value="SELEÇÃO">SELEÇÃO</option>
+                <option value="EXTENSÃO">EXTENSÃO</option>
+                <option value="CAPACITAÇÃO">CAPACITAÇÃO</option>
+                <option value="AVISO">AVISO</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Local / Modalidade</label>
+              <input id="evLocal" type="text" required placeholder="Ex: BLOCO 26 ou ONLINE" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Título do Edital ou Curso</label>
+            <input id="evTitle" type="text" required placeholder="Ex: Seleção de Monitores Voluntários 2026" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Descrição no Card</label>
+            <textarea id="evDesc" rows="2" required placeholder="Resumo exibido na página inicial..." class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Detalhes Completos (Ementa / Prazos / Requisitos)</label>
+            <textarea id="evDetails" rows="3" required placeholder="Informações detalhadas que aparecem ao clicar e também alimentam o Assistente..." class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs"></textarea>
+          </div>
+          <button type="submit" class="px-4 py-2 bg-black hover:bg-zinc-800 text-white text-xs font-medium rounded-[2px] transition-colors">
+            Publicar no Site
+          </button>
+        </form>
+        <div id="eventFeedback" class="hidden p-3 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono rounded-[2px]"></div>
+
+        <!-- Lista de Eventos Ativos -->
+        <div class="pt-4 border-t border-lab-border">
+          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">EVENTOS E EDITAIS PUBLICADOS NO SITE:</h4>
+          <div id="activeEventsList" class="divide-y divide-lab-border border border-lab-border rounded-[2px] text-xs"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+    let adminToken = sessionStorage.getItem('labmc_admin_token') || '';
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const pwd = document.getElementById('adminPasswordInput').value;
+      const errBox = document.getElementById('loginError');
+      errBox.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'X-Admin-Token': pwd }
+        });
+        if (!res.ok) throw new Error('Senha incorreta.');
+        adminToken = pwd;
+        sessionStorage.setItem('labmc_admin_token', pwd);
+        showDashboard();
+      } catch (err) {
+        errBox.textContent = err.message;
+        errBox.classList.remove('hidden');
+      }
+    }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem('labmc_admin_token');
+      adminToken = '';
+      location.reload();
+    }
+
+    async function showDashboard() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('dashboardSection').classList.remove('hidden');
+      document.getElementById('logoutBtn').classList.remove('hidden');
+      await refreshAdminData();
+    }
+
+    async function refreshAdminData() {
+      const healthRes = await fetch('/api/health');
+      if (healthRes.ok) {
+        const h = await healthRes.json();
+        document.getElementById('statusAiBadge').textContent = h.ai_configured ? 'API Gemini: Ativa' : 'API Gemini: Não configurada';
+        document.getElementById('statusDocsCount').textContent = `${h.indexed_docs} arquivo(s) indexado(s)`;
+
+        const filesBox = document.getElementById('indexedFilesList');
+        if (!h.docs_list || h.docs_list.length === 0) {
+          filesBox.innerHTML = '<div class="p-3 text-zinc-500 font-mono">Nenhum arquivo na pasta static/docs ainda.</div>';
+        } else {
+          filesBox.innerHTML = h.docs_list.map(name => `
+            <div class="p-2.5 flex items-center justify-between bg-lab-paper">
+              <span class="font-mono text-black truncate">${name}</span>
+              <button onclick="deleteDoc('${name}')" class="text-red-700 hover:underline font-mono ml-2">Remover</button>
+            </div>
+          `).join('');
+        }
+      }
+
+      const contentRes = await fetch('/api/content');
+      if (contentRes.ok) {
+        const c = await contentRes.json();
+        const evBox = document.getElementById('activeEventsList');
+        const eventos = c.eventos || [];
+        evBox.innerHTML = eventos.map((ev, idx) => `
+          <div class="p-2.5 flex items-center justify-between bg-lab-paper">
+            <div class="truncate pr-2">
+              <span class="font-mono text-lab-green font-semibold">[${ev.badge}]</span>
+              <span class="text-black font-medium ml-1">${ev.titulo}</span>
+            </div>
+            <button onclick="deleteEvent(${idx})" class="text-red-700 hover:underline font-mono shrink-0">Excluir</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    async function handleDocUpload(e) {
+      e.preventDefault();
+      const fb = document.getElementById('uploadFeedback');
+      const fileInput = document.getElementById('docFile');
+      if (!fileInput.files[0]) return;
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      formData.append('titulo', document.getElementById('docTitle').value);
+      formData.append('tag', document.getElementById('docTag').value);
+      formData.append('descricao', document.getElementById('docDesc').value);
+      formData.append('add_to_portal', document.getElementById('docAddPortal').checked);
+
+      const res = await fetch('/api/admin/upload-doc', {
+        method: 'POST',
+        headers: { 'X-Admin-Token': adminToken },
+        body: formData
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        fb.textContent = `Arquivo "${data.filename}" enviado e indexado no Assistente.`;
+        fb.classList.remove('hidden');
+        e.target.reset();
+        await refreshAdminData();
+      } else {
+        alert('Erro ao enviar documento. Verifique o formato (.pdf, .md ou .txt).');
+      }
+    }
+
+    async function deleteDoc(filename) {
+      if (!confirm(`Remover o arquivo "${filename}" da base do assistente?`)) return;
+      const res = await fetch(`/api/admin/docs/${encodeURIComponent(filename)}`, {
+        method: 'DELETE',
+        headers: { 'X-Admin-Token': adminToken }
+      });
+      if (res.ok) await refreshAdminData();
+    }
+
+    async function handleEventCreate(e) {
+      e.preventDefault();
+      const fb = document.getElementById('eventFeedback');
+      const payload = {
+        badge: document.getElementById('evBadge').value,
+        local: document.getElementById('evLocal').value,
+        titulo: document.getElementById('evTitle').value,
+        descricao: document.getElementById('evDesc').value,
+        detalhes: document.getElementById('evDetails').value,
+        cta: 'Ver detalhes'
+      };
+
+      const res = await fetch('/api/admin/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Token': adminToken
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        fb.textContent = 'Edital/Evento publicado com sucesso na página inicial.';
+        fb.classList.remove('hidden');
+        e.target.reset();
+        await refreshAdminData();
+      }
+    }
+
+    async function deleteEvent(index) {
+      if (!confirm('Excluir este item do mural do portal?')) return;
+      const res = await fetch(`/api/admin/events/${index}`, {
+        method: 'DELETE',
+        headers: { 'X-Admin-Token': adminToken }
+      });
+      if (res.ok) await refreshAdminData();
+    }
+
+    if (adminToken) {
+      fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'X-Admin-Token': adminToken }
+      }).then(res => {
+        if (res.ok) showDashboard();
+      });
+    }
+  </script>
+</body>
+</html>

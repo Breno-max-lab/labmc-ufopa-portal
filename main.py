@@ -479,4 +479,4 @@ async def serve_admin():
     admin_file = STATIC_DIR / "admin.html"
     if not admin_file.exists():
         raise HTTPException(status_code=404, detail="Arquivo static/admin.html não encontrado.")
-    return FileResponse(str(admin_file))
+    return FileResponse(str(admin_file)) 

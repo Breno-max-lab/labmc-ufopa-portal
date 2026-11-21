@@ -19,7 +19,7 @@ load_dotenv()
 app = FastAPI(
     title="Portal Institucional LabMC - UFOPA",
     description="Backend, CMS em JSON, RAG de Documentos e Sincronização GitHub do LabMC UFOPA",
-    version="1.4.0",
+    version="1.5.0",
 )
 
 app.add_middleware(
@@ -472,8 +472,11 @@ async def serve_index():
 
 
 @app.get("/admin")
+@app.get("/admin/")
+@app.get("/Admin")
+@app.get("/Admin/")
 async def serve_admin():
     admin_file = STATIC_DIR / "admin.html"
     if not admin_file.exists():
         raise HTTPException(status_code=404, detail="Arquivo static/admin.html não encontrado.")
-    return FileResponse(str(admin_file)) 
+    return FileResponse(str(admin_file))

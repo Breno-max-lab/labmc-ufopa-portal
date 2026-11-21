@@ -15,6 +15,39 @@
     "descricao": "Docente do Instituto de Engenharia e Geociências (IEG / UFOPA). Linhas de pesquisa: Dinâmica dos Fluidos Computacional (DFC), Métodos Numéricos e Computação Paralela em GPU (CUDA).",
     "lattes": "http://lattes.cnpq.br/"
   },
+  "infraestrutura": [
+    {
+      "recurso": "Estações GPU NVIDIA",
+      "especificacao": "Workstations com GPUs NVIDIA arquitetura CUDA, processadores multi-core e memória dedicada",
+      "aplicacao": "Processamento paralelo via API CUDA (C/C++)",
+      "status": "OPERACIONAL"
+    },
+    {
+      "recurso": "Bancadas de Ensino",
+      "especificacao": "Computadores com ambiente dual-boot Linux (Ubuntu) e suíte científica instalada",
+      "aplicacao": "Disciplinas do PC&T, monitoria e cursos de extensão",
+      "status": "OPERACIONAL"
+    },
+    {
+      "recurso": "Ambiente CFD & Malhas",
+      "especificacao": "OpenFOAM, ParaView, Gmsh e bibliotecas de visualização científica",
+      "aplicacao": "Dinâmica dos Fluidos Computacional (DFC)",
+      "status": "INSTALADO"
+    },
+    {
+      "recurso": "Stack de Ciência de Dados",
+      "especificacao": "Python 3, NumPy, SciPy, Scikit-learn, PyTorch, Jupyter e compiladores GCC/NVCC",
+      "aplicacao": "Machine Learning e métodos numéricos",
+      "status": "INSTALADO"
+    }
+  ],
+  "agenda": [
+    { "dia": "SEGUNDA", "manha_horario": "08h00 - 12h00", "manha_atividade": "Monitoria PC&T", "tarde_horario": "14h00 - 18h00", "tarde_atividade": "Pesquisa CFD / IC" },
+    { "dia": "TERÇA", "manha_horario": "08h00 - 12h00", "manha_atividade": "Aulas Práticas IEG", "tarde_horario": "14h00 - 18h00", "tarde_atividade": "Computação GPU CUDA" },
+    { "dia": "QUARTA", "manha_horario": "08h00 - 12h00", "manha_atividade": "Monitoria PC&T", "tarde_horario": "14h00 - 18h00", "tarde_atividade": "Orientação de TCC" },
+    { "dia": "QUINTA", "manha_horario": "08h00 - 12h00", "manha_atividade": "Aulas Práticas IEG", "tarde_horario": "14h00 - 18h00", "tarde_atividade": "Seminários Internos" },
+    { "dia": "SEXTA", "manha_horario": "08h00 - 12h00", "manha_atividade": "Oficinas & Extensão", "tarde_horario": "14h00 - 18h00", "tarde_atividade": "Manutenção de Cluster" }
+  ],
   "equipe": [
     { "name": "Prof. Dr. Josecley Fialho Góes", "role": "Coordenador / Pesquisador", "category": "pesquisadores", "area": "CFD, Métodos Numéricos e GPU CUDA" },
     { "name": "Corpo Docente Colaborador IEG", "role": "Pesquisadores Associados", "category": "pesquisadores", "area": "Modelagem Matemática e Engenharia Física" },

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Administração | LabMC - UFOPA</title>
+  <title>Administração Completa | LabMC - UFOPA</title>
   <link rel="icon" type="image/jpeg" href="/static/assets/logo-labmc.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -36,14 +36,14 @@
 <body class="bg-lab-paper text-black font-sans antialiased">
 
   <!-- Barra Superior -->
-  <header class="bg-white border-b border-lab-border">
+  <header class="bg-white border-b border-lab-border sticky top-0 z-30">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <img src="/static/assets/logo-labmc.jpg" alt="LabMC" class="h-10 w-auto object-contain" />
         <span class="text-xs font-mono px-2 py-0.5 bg-black text-white rounded-[2px]">PAINEL ADMIN</span>
       </div>
       <div class="flex items-center gap-4 text-xs font-mono">
-        <a href="/" class="text-zinc-700 hover:text-black underline">← Voltar ao Portal</a>
+        <a href="/" class="text-zinc-700 hover:text-black underline">← Ver Portal Público</a>
         <button id="logoutBtn" onclick="logoutAdmin()" class="hidden text-red-700 hover:underline">Sair</button>
       </div>
     </div>
@@ -55,7 +55,7 @@
       <div class="text-[11px] font-mono text-lab-green font-semibold uppercase">Acesso Restrito</div>
       <h1 class="text-xl font-bold mt-1">Coordenação e Monitoria LabMC</h1>
       <p class="text-xs text-zinc-600 mt-2 leading-relaxed">
-        Insira a senha administrativa para enviar documentos PDF ao assistente virtual, publicar editais ou atualizar avisos do portal.
+        Gerencie documentos do assistente IA, editais, equipe, projetos, produções científicas, equipamentos e agenda semanal do laboratório.
       </p>
 
       <form onsubmit="handleAdminLogin(event)" class="mt-6 space-y-4">
@@ -72,72 +72,85 @@
   </main>
 
   <!-- Painel Principal -->
-  <main id="dashboardSection" class="hidden max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-10">
+  <main id="dashboardSection" class="hidden max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
 
     <!-- Status Geral -->
-    <div class="bg-white border border-lab-border p-5 rounded-[2px] flex flex-wrap items-center justify-between gap-4">
+    <div class="bg-white border border-lab-border p-4 sm:p-5 rounded-[2px] flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h2 class="text-base font-bold">Base de Conhecimento do Assistente &amp; Portal</h2>
-        <p class="text-xs text-zinc-600 mt-0.5">Todo arquivo enviado aqui é indexado imediatamente para o Assistente IA responder aos alunos.</p>
+        <h2 class="text-base font-bold">Gestão Integral do Portal &amp; Assistente LabMC</h2>
+        <p class="text-xs text-zinc-600 mt-0.5">As alterações salvas aqui atualizam o site na hora e geram backup automático no GitHub.</p>
       </div>
-      <div class="flex items-center gap-4 text-xs font-mono">
-        <span id="statusAiBadge" class="px-2.5 py-1 bg-lab-greenLight border border-lab-greenBorder text-lab-green rounded-[2px]">Verificando IA...</span>
-        <span id="statusDocsCount" class="px-2.5 py-1 bg-lab-surface border border-lab-border text-black rounded-[2px]">0 documentos</span>
+      <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+        <span id="statusGitBadge" class="px-2.5 py-1 bg-lab-surface border border-lab-border text-black rounded-[2px]">GitHub: Verificando...</span>
+        <span id="statusAiBadge" class="px-2.5 py-1 bg-lab-greenLight border border-lab-greenBorder text-lab-green rounded-[2px]">IA: Verificando...</span>
+        <span id="statusDocsCount" class="px-2.5 py-1 bg-lab-surface border border-lab-border text-black rounded-[2px]">0 docs</span>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      <!-- Upload de Documentos (PDF / MD / TXT) -->
+    <!-- Toast Global de Feedback -->
+    <div id="globalToast" class="hidden p-3 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono rounded-[2px]"></div>
+
+    <!-- Navegação por Abas -->
+    <div class="flex flex-wrap gap-1.5 border-b border-lab-border pb-3">
+      <button onclick="switchAdminTab('docs-eventos')" id="tabBtn-docs-eventos" class="admin-tab px-3.5 py-2 text-xs font-medium bg-lab-green text-white rounded-[2px]">1. Documentos &amp; Editais</button>
+      <button onclick="switchAdminTab('equipe-coord')" id="tabBtn-equipe-coord" class="admin-tab px-3.5 py-2 text-xs font-medium bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">2. Coordenação &amp; Equipe</button>
+      <button onclick="switchAdminTab('projetos-prod')" id="tabBtn-projetos-prod" class="admin-tab px-3.5 py-2 text-xs font-medium bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">3. Projetos &amp; Produções</button>
+      <button onclick="switchAdminTab('infra-agenda')" id="tabBtn-infra-agenda" class="admin-tab px-3.5 py-2 text-xs font-medium bg-white text-zinc-700 border border-lab-border hover:text-black rounded-[2px]">4. Equipamentos &amp; Agenda</button>
+    </div>
+
+    <!-- ===================================================================
+         ABA 1: DOCUMENTOS (PDFs) & EDITAIS/EVENTOS
+         =================================================================== -->
+    <section id="tabPanel-docs-eventos" class="admin-panel grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Upload de Documentos -->
       <div class="lg:col-span-6 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
         <div class="border-b border-lab-border pb-3">
-          <div class="text-[11px] font-mono text-lab-green font-semibold">1. BASE DO ASSISTENTE &amp; DOWNLOADS</div>
+          <div class="text-[11px] font-mono text-lab-green font-semibold">BASE DO ASSISTENTE &amp; DOWNLOADS</div>
           <h3 class="text-base font-bold mt-0.5">Enviar Documento (PDF, MD ou TXT)</h3>
         </div>
 
-        <form id="uploadForm" onsubmit="handleDocUpload(event)" class="space-y-4">
+        <form onsubmit="handleDocUpload(event)" class="space-y-3">
           <div>
             <label class="block text-xs font-medium mb-1">Arquivo Oficial (.pdf, .md, .txt)</label>
-            <input id="docFile" type="file" accept=".pdf,.md,.txt" required class="w-full text-xs text-zinc-700 file:mr-3 file:py-2 file:px-3 file:rounded-[2px] file:border-0 file:text-xs file:font-mono file:bg-lab-surface file:text-black hover:file:bg-zinc-200 border border-lab-borderStrong rounded-[2px] p-1" />
+            <input id="docFile" type="file" accept=".pdf,.md,.txt" required class="w-full text-xs text-zinc-700 file:mr-3 file:py-2 file:px-3 file:rounded-[2px] file:border-0 file:text-xs file:font-mono file:bg-lab-surface file:text-black border border-lab-borderStrong rounded-[2px] p-1" />
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium mb-1">Título no Portal</label>
-              <input id="docTitle" type="text" placeholder="Ex: Edital Monitoria 2026.2" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs focus:outline-none focus:border-lab-green" />
+              <input id="docTitle" type="text" placeholder="Ex: Edital Monitoria 2026.2" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
             </div>
             <div>
               <label class="block text-xs font-medium mb-1">Categoria</label>
-              <input id="docTag" type="text" value="EDITAL / NORMA" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs font-mono focus:outline-none focus:border-lab-green" />
+              <input id="docTag" type="text" value="EDITAL / NORMA" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs font-mono" />
             </div>
           </div>
           <div>
             <label class="block text-xs font-medium mb-1">Resumo Curto</label>
-            <textarea id="docDesc" rows="2" placeholder="Breve descrição exibida na aba Regimento & Manuais..." class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs focus:outline-none focus:border-lab-green"></textarea>
+            <textarea id="docDesc" rows="2" placeholder="Descrição exibida na aba Regimento & Manuais..." class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs"></textarea>
           </div>
           <label class="flex items-center gap-2 text-xs text-zinc-700 cursor-pointer">
             <input id="docAddPortal" type="checkbox" checked class="accent-lab-green" />
-            <span>Exibir também para download na aba "Regimento &amp; Manuais" do site</span>
+            <span>Exibir também para download na aba "Regimento &amp; Manuais"</span>
           </label>
-          <button type="submit" class="px-4 py-2 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px] transition-colors">
+          <button type="submit" class="px-4 py-2 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px]">
             Enviar e Indexar Documento
           </button>
         </form>
-        <div id="uploadFeedback" class="hidden p-3 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono rounded-[2px]"></div>
 
-        <!-- Lista de Arquivos Indexados -->
         <div class="pt-4 border-t border-lab-border">
-          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">ARQUIVOS ATIVOS NA PASTA DE CONHECIMENTO:</h4>
+          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">ARQUIVOS INDEXADOS NA PASTA DOCS:</h4>
           <div id="indexedFilesList" class="divide-y divide-lab-border border border-lab-border rounded-[2px] text-xs"></div>
         </div>
       </div>
 
-      <!-- Publicar Edital / Evento no Mural -->
+      <!-- Publicar Edital / Evento -->
       <div class="lg:col-span-6 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
         <div class="border-b border-lab-border pb-3">
-          <div class="text-[11px] font-mono text-lab-green font-semibold">2. MURAL DE OPORTUNIDADES</div>
+          <div class="text-[11px] font-mono text-lab-green font-semibold">MURAL DE OPORTUNIDADES</div>
           <h3 class="text-base font-bold mt-0.5">Publicar Edital, Curso ou Evento</h3>
         </div>
 
-        <form id="eventForm" onsubmit="handleEventCreate(event)" class="space-y-4">
+        <form onsubmit="handleEventCreate(event)" class="space-y-3">
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium mb-1">Selo (Badge)</label>
@@ -154,35 +167,302 @@
             </div>
           </div>
           <div>
-            <label class="block text-xs font-medium mb-1">Título do Edital ou Curso</label>
+            <label class="block text-xs font-medium mb-1">Título</label>
             <input id="evTitle" type="text" required placeholder="Ex: Seleção de Monitores Voluntários 2026" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
           </div>
           <div>
             <label class="block text-xs font-medium mb-1">Descrição no Card</label>
-            <textarea id="evDesc" rows="2" required placeholder="Resumo exibido na página inicial..." class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs"></textarea>
+            <textarea id="evDesc" rows="2" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs"></textarea>
           </div>
           <div>
             <label class="block text-xs font-medium mb-1">Detalhes Completos (Ementa / Prazos / Requisitos)</label>
-            <textarea id="evDetails" rows="3" required placeholder="Informações detalhadas que aparecem ao clicar e também alimentam o Assistente..." class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs"></textarea>
+            <textarea id="evDetails" rows="2" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs"></textarea>
           </div>
-          <button type="submit" class="px-4 py-2 bg-black hover:bg-zinc-800 text-white text-xs font-medium rounded-[2px] transition-colors">
+          <button type="submit" class="px-4 py-2 bg-black hover:bg-zinc-800 text-white text-xs font-medium rounded-[2px]">
             Publicar no Site
           </button>
         </form>
-        <div id="eventFeedback" class="hidden p-3 bg-lab-greenLight border border-lab-greenBorder text-lab-green text-xs font-mono rounded-[2px]"></div>
 
-        <!-- Lista de Eventos Ativos -->
         <div class="pt-4 border-t border-lab-border">
-          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">EVENTOS E EDITAIS PUBLICADOS NO SITE:</h4>
+          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">EVENTOS E EDITAIS PUBLICADOS:</h4>
           <div id="activeEventsList" class="divide-y divide-lab-border border border-lab-border rounded-[2px] text-xs"></div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <!-- ===================================================================
+         ABA 2: COORDENAÇÃO, INSTITUCIONAL & EQUIPE
+         =================================================================== -->
+    <section id="tabPanel-equipe-coord" class="admin-panel hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Coordenação e Institucional -->
+      <div class="lg:col-span-5 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
+        <div class="border-b border-lab-border pb-3">
+          <div class="text-[11px] font-mono text-lab-green font-semibold">DADOS PRINCIPAIS</div>
+          <h3 class="text-base font-bold mt-0.5">Coordenação &amp; Institucional</h3>
+        </div>
+
+        <form onsubmit="saveCoordAndInst(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium mb-1">Nome do Coordenador(a)</label>
+            <input id="editCoordNome" type="text" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Cargo / Título</label>
+            <input id="editCoordCargo" type="text" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Descrição / Linhas da Coordenação</label>
+            <textarea id="editCoordDesc" rows="3" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Link Currículo Lattes</label>
+            <input id="editCoordLattes" type="url" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <hr class="border-lab-border" />
+          <div>
+            <label class="block text-xs font-medium mb-1">Horário Geral de Funcionamento</label>
+            <input id="editInstHorario" type="text" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs font-mono" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Localização Física</label>
+            <input id="editInstLocal" type="text" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <button type="submit" class="px-4 py-2 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px]">
+            Salvar Dados Institucionais
+          </button>
+        </form>
+      </div>
+
+      <!-- Gerenciar Equipe -->
+      <div class="lg:col-span-7 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
+        <div class="border-b border-lab-border pb-3">
+          <div class="text-[11px] font-mono text-lab-green font-semibold">CORPO ACADÊMICO</div>
+          <h3 class="text-base font-bold mt-0.5">Adicionar Membro ou Grupo à Equipe</h3>
+        </div>
+
+        <form onsubmit="addTeamMember(event)" class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Nome Completo ou Grupo</label>
+              <input id="teamName" type="text" required placeholder="Ex: João Silva (Monitor PC&T)" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Categoria de Filtro</label>
+              <select id="teamCategory" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs">
+                <option value="pesquisadores">Pesquisadores</option>
+                <option value="tecnicos">Técnicos</option>
+                <option value="graduacao">Graduação (IC / Monitoria)</option>
+                <option value="pos">Pós-Graduação</option>
+                <option value="egressos">Egressos</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Função / Vínculo</label>
+              <input id="teamRole" type="text" required placeholder="Ex: Bolsista PIBIC / Graduação" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Área de Atuação</label>
+              <input id="teamArea" type="text" required placeholder="Ex: Simulação CFD e OpenFOAM" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+            </div>
+          </div>
+          <button type="submit" class="px-4 py-2 bg-black hover:bg-zinc-800 text-white text-xs font-medium rounded-[2px]">
+            Adicionar à Equipe
+          </button>
+        </form>
+
+        <div class="pt-4 border-t border-lab-border">
+          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">MEMBROS CADASTRADOS:</h4>
+          <div id="teamAdminList" class="divide-y divide-lab-border border border-lab-border rounded-[2px] text-xs max-h-80 overflow-y-auto"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         ABA 3: PROJETOS & PRODUÇÕES CIENTÍFICAS
+         =================================================================== -->
+    <section id="tabPanel-projetos-prod" class="admin-panel hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Projetos -->
+      <div class="lg:col-span-6 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
+        <div class="border-b border-lab-border pb-3">
+          <div class="text-[11px] font-mono text-lab-green font-semibold">PESQUISA APLICADA</div>
+          <h3 class="text-base font-bold mt-0.5">Adicionar Projeto ou Linha de Pesquisa</h3>
+        </div>
+
+        <form onsubmit="addProject(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium mb-1">Título do Projeto</label>
+            <input id="projTitle" type="text" required placeholder="Ex: Modelagem Hidrodinâmica no Rio Tapajós" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Filtro</label>
+              <select id="projCategory" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs">
+                <option value="cfd">CFD / Fluidos</option>
+                <option value="cuda">NVIDIA CUDA</option>
+                <option value="ml">Machine Learning</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Etiqueta (Tag)</label>
+              <input id="projTag" type="text" required placeholder="Ex: DFC / CFD" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs font-mono" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Resumo do Projeto</label>
+            <textarea id="projSummary" rows="2" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Ferramentas / Tecnologias (separadas por vírgula)</label>
+            <input id="projTools" type="text" required placeholder="Ex: OpenFOAM, Python, CUDA" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs font-mono" />
+          </div>
+          <button type="submit" class="px-4 py-2 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px]">
+            Adicionar Projeto
+          </button>
+        </form>
+
+        <div class="pt-4 border-t border-lab-border">
+          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">PROJETOS ATIVOS NO SITE:</h4>
+          <div id="projectsAdminList" class="divide-y divide-lab-border border border-lab-border rounded-[2px] text-xs"></div>
+        </div>
+      </div>
+
+      <!-- Produções Científicas -->
+      <div class="lg:col-span-6 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
+        <div class="border-b border-lab-border pb-3">
+          <div class="text-[11px] font-mono text-lab-green font-semibold">PRODUÇÃO CIENTÍFICA</div>
+          <h3 class="text-base font-bold mt-0.5">Adicionar Artigo, TCC ou Material Didático</h3>
+        </div>
+
+        <form onsubmit="addPublication(event)" class="space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Ano</label>
+              <input id="pubYear" type="text" required value="2026" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs font-mono" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Tipo de Produção</label>
+              <select id="pubType" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs">
+                <option value="Artigo em Periódico">Artigo em Periódico</option>
+                <option value="Trabalho em Evento">Trabalho em Evento</option>
+                <option value="Trabalho de Conclusão de Curso">Trabalho de Conclusão de Curso</option>
+                <option value="Dissertação / Tese">Dissertação / Tese</option>
+                <option value="Material Didático">Material Didático</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Título Completo</label>
+            <input id="pubTitle" type="text" required class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Autores (Formato citação)</label>
+            <input id="pubAuthors" type="text" required placeholder="Ex: GÓES, J. F.; SILVA, A. B." class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Revista, Evento ou Instituição</label>
+            <input id="pubVenue" type="text" required placeholder="Ex: Instituto de Engenharia e Geociências, UFOPA" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <button type="submit" class="px-4 py-2 bg-black hover:bg-zinc-800 text-white text-xs font-medium rounded-[2px]">
+            Publicar Produção
+          </button>
+        </form>
+
+        <div class="pt-4 border-t border-lab-border">
+          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">PRODUÇÕES CADASTRADAS:</h4>
+          <div id="pubsAdminList" class="divide-y divide-lab-border border border-lab-border rounded-[2px] text-xs"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         ABA 4: INFRAESTRUTURA (EQUIPAMENTOS) & AGENDA SEMANAL
+         =================================================================== -->
+    <section id="tabPanel-infra-agenda" class="admin-panel hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Equipamentos -->
+      <div class="lg:col-span-6 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
+        <div class="border-b border-lab-border pb-3">
+          <div class="text-[11px] font-mono text-lab-green font-semibold">HARDWARE &amp; SOFTWARE</div>
+          <h3 class="text-base font-bold mt-0.5">Adicionar Equipamento ou Suíte</h3>
+        </div>
+
+        <form onsubmit="addInfraItem(event)" class="space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium mb-1">Recurso / Categoria</label>
+              <input id="infRecurso" type="text" required placeholder="Ex: Servidor GPU RTX" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium mb-1">Status</label>
+              <select id="infStatus" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs font-mono">
+                <option value="OPERACIONAL">OPERACIONAL</option>
+                <option value="INSTALADO">INSTALADO</option>
+                <option value="MANUTENÇÃO">MANUTENÇÃO</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Especificação Técnica</label>
+            <input id="infSpec" type="text" required placeholder="Ex: Ubuntu 24.04, CUDA 12, 64GB RAM" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Aplicação Principal</label>
+            <input id="infApp" type="text" required placeholder="Ex: Simulações paralelas e treinamento de modelos" class="w-full px-3 py-2 bg-lab-paper border border-lab-borderStrong rounded-[2px] text-xs" />
+          </div>
+          <button type="submit" class="px-4 py-2 bg-lab-green hover:bg-lab-greenDark text-white text-xs font-medium rounded-[2px]">
+            Adicionar Recurso
+          </button>
+        </form>
+
+        <div class="pt-4 border-t border-lab-border">
+          <h4 class="text-xs font-mono font-semibold text-zinc-600 mb-2">TABELA DE INFRAESTRUTURA ATUAL:</h4>
+          <div id="infraAdminList" class="divide-y divide-lab-border border border-lab-border rounded-[2px] text-xs"></div>
+        </div>
+      </div>
+
+      <!-- Agenda Semanal -->
+      <div class="lg:col-span-6 bg-white border border-lab-border p-6 rounded-[2px] space-y-4">
+        <div class="border-b border-lab-border pb-3">
+          <div class="text-[11px] font-mono text-lab-green font-semibold">BLOCO 26 • ESCALA REGULAR</div>
+          <h3 class="text-base font-bold mt-0.5">Editar Agenda Semanal do Laboratório</h3>
+        </div>
+
+        <form onsubmit="saveAgenda(event)" class="space-y-3">
+          <div id="agendaEditorList" class="space-y-3"></div>
+          <button type="submit" class="px-4 py-2 bg-black hover:bg-zinc-800 text-white text-xs font-medium rounded-[2px]">
+            Salvar Agenda Semanal
+          </button>
+        </form>
+      </div>
+    </section>
+
   </main>
 
   <script>
     lucide.createIcons();
     let adminToken = sessionStorage.getItem('labmc_admin_token') || '';
+    let portalData = {};
+
+    function showToast(msg) {
+      const t = document.getElementById('globalToast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 5000);
+    }
+
+    function switchAdminTab(tabId) {
+      document.querySelectorAll('.admin-tab').forEach(btn => {
+        btn.classList.remove('bg-lab-green', 'text-white');
+        btn.classList.add('bg-white', 'text-zinc-700', 'border', 'border-lab-border');
+      });
+      const activeBtn = document.getElementById(`tabBtn-${tabId}`);
+      activeBtn.classList.remove('bg-white', 'text-zinc-700', 'border', 'border-lab-border');
+      activeBtn.classList.add('bg-lab-green', 'text-white');
+
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
+      document.getElementById(`tabPanel-${tabId}`).classList.remove('hidden');
+    }
 
     async function handleAdminLogin(e) {
       e.preventDefault();
@@ -195,7 +475,7 @@
           method: 'POST',
           headers: { 'X-Admin-Token': pwd }
         });
-        if (!res.ok) throw new Error('Senha incorreta.');
+        if (!res.ok) throw new Error('Senha administrativa incorreta.');
         adminToken = pwd;
         sessionStorage.setItem('labmc_admin_token', pwd);
         showDashboard();
@@ -218,12 +498,34 @@
       await refreshAdminData();
     }
 
+    async function savePortalData(commitMessage) {
+      const res = await fetch('/api/admin/content', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Token': adminToken,
+          'X-Commit-Message': commitMessage
+        },
+        body: JSON.stringify(portalData)
+      });
+      if (res.ok) {
+        const out = await res.json();
+        showToast(out.github_synced
+          ? 'Alterações salvas no portal e sincronizadas com o GitHub!'
+          : 'Alterações salvas localmente no servidor.');
+        await refreshAdminData();
+      } else {
+        alert('Erro ao salvar alterações. Verifique sua sessão.');
+      }
+    }
+
     async function refreshAdminData() {
       const healthRes = await fetch('/api/health');
       if (healthRes.ok) {
         const h = await healthRes.json();
-        document.getElementById('statusAiBadge').textContent = h.ai_configured ? 'API Gemini: Ativa' : 'API Gemini: Não configurada';
-        document.getElementById('statusDocsCount').textContent = `${h.indexed_docs} arquivo(s) indexado(s)`;
+        document.getElementById('statusAiBadge').textContent = h.ai_configured ? 'IA Gemini: Ativa' : 'IA Gemini: Offline';
+        document.getElementById('statusGitBadge').textContent = h.github_sync ? 'GitHub Sync: Ativo' : 'GitHub Sync: Inativo';
+        document.getElementById('statusDocsCount').textContent = `${h.indexed_docs} doc(s)`;
 
         const filesBox = document.getElementById('indexedFilesList');
         if (!h.docs_list || h.docs_list.length === 0) {
@@ -240,24 +542,107 @@
 
       const contentRes = await fetch('/api/content');
       if (contentRes.ok) {
-        const c = await contentRes.json();
-        const evBox = document.getElementById('activeEventsList');
-        const eventos = c.eventos || [];
-        evBox.innerHTML = eventos.map((ev, idx) => `
-          <div class="p-2.5 flex items-center justify-between bg-lab-paper">
-            <div class="truncate pr-2">
-              <span class="font-mono text-lab-green font-semibold">[${ev.badge}]</span>
-              <span class="text-black font-medium ml-1">${ev.titulo}</span>
-            </div>
-            <button onclick="deleteEvent(${idx})" class="text-red-700 hover:underline font-mono shrink-0">Excluir</button>
-          </div>
-        `).join('');
+        portalData = await contentRes.json();
+        renderAllAdminSections();
       }
     }
 
+    function renderAllAdminSections() {
+      // Eventos
+      const eventos = portalData.eventos || [];
+      document.getElementById('activeEventsList').innerHTML = eventos.map((ev, idx) => `
+        <div class="p-2.5 flex items-center justify-between bg-lab-paper">
+          <div class="truncate pr-2">
+            <span class="font-mono text-lab-green font-semibold">[${ev.badge}]</span>
+            <span class="text-black font-medium ml-1">${ev.titulo}</span>
+          </div>
+          <button onclick="removeItem('eventos', ${idx}, 'remove edital/evento')" class="text-red-700 hover:underline font-mono shrink-0">Excluir</button>
+        </div>
+      `).join('');
+
+      // Coordenação & Institucional
+      const c = portalData.coordenacao || {};
+      const inst = portalData.institucional || {};
+      document.getElementById('editCoordNome').value = c.nome || '';
+      document.getElementById('editCoordCargo').value = c.cargo || '';
+      document.getElementById('editCoordDesc').value = c.descricao || '';
+      document.getElementById('editCoordLattes').value = c.lattes || '';
+      document.getElementById('editInstHorario').value = inst.horario_geral || '';
+      document.getElementById('editInstLocal').value = inst.localizacao || '';
+
+      // Equipe
+      const equipe = portalData.equipe || [];
+      document.getElementById('teamAdminList').innerHTML = equipe.map((m, idx) => `
+        <div class="p-2.5 flex items-center justify-between bg-lab-paper">
+          <div class="truncate pr-2">
+            <span class="font-mono text-lab-green uppercase">[${m.category}]</span>
+            <span class="text-black font-medium ml-1">${m.name}</span>
+            <span class="text-zinc-500">• ${m.role}</span>
+          </div>
+          <button onclick="removeItem('equipe', ${idx}, 'remove membro da equipe')" class="text-red-700 hover:underline font-mono shrink-0">Excluir</button>
+        </div>
+      `).join('');
+
+      // Projetos
+      const projetos = portalData.projetos || [];
+      document.getElementById('projectsAdminList').innerHTML = projetos.map((p, idx) => `
+        <div class="p-2.5 flex items-center justify-between bg-lab-paper">
+          <div class="truncate pr-2">
+            <span class="font-mono text-lab-green">[${p.tag}]</span>
+            <span class="text-black font-medium ml-1">${p.title}</span>
+          </div>
+          <button onclick="removeItem('projetos', ${idx}, 'remove projeto')" class="text-red-700 hover:underline font-mono shrink-0">Excluir</button>
+        </div>
+      `).join('');
+
+      // Produções
+      const producoes = portalData.producoes || [];
+      document.getElementById('pubsAdminList').innerHTML = producoes.map((pub, idx) => `
+        <div class="p-2.5 flex items-center justify-between bg-lab-paper">
+          <div class="truncate pr-2">
+            <span class="font-mono text-lab-green">${pub.year}</span>
+            <span class="text-black font-medium ml-1">${pub.title}</span>
+          </div>
+          <button onclick="removeItem('producoes', ${idx}, 'remove producao cientifica')" class="text-red-700 hover:underline font-mono shrink-0">Excluir</button>
+        </div>
+      `).join('');
+
+      // Infraestrutura
+      const infra = portalData.infraestrutura || [];
+      document.getElementById('infraAdminList').innerHTML = infra.map((item, idx) => `
+        <div class="p-2.5 flex items-center justify-between bg-lab-paper">
+          <div class="truncate pr-2">
+            <span class="font-mono text-lab-green">[${item.status}]</span>
+            <span class="text-black font-medium ml-1">${item.recurso}</span>
+          </div>
+          <button onclick="removeItem('infraestrutura', ${idx}, 'remove equipamento')" class="text-red-700 hover:underline font-mono shrink-0">Excluir</button>
+        </div>
+      `).join('');
+
+      // Agenda
+      const agenda = portalData.agenda || [];
+      document.getElementById('agendaEditorList').innerHTML = agenda.map((diaObj, idx) => `
+        <div class="p-3 bg-lab-paper border border-lab-border rounded-[2px] space-y-2">
+          <div class="font-mono text-xs font-bold text-lab-green">${diaObj.dia}</div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <input type="text" data-agenda-idx="${idx}" data-field="manha_horario" value="${diaObj.manha_horario}" class="px-2 py-1 bg-white border border-lab-borderStrong rounded-[2px] font-mono" />
+            <input type="text" data-agenda-idx="${idx}" data-field="manha_atividade" value="${diaObj.manha_atividade}" class="px-2 py-1 bg-white border border-lab-borderStrong rounded-[2px]" />
+            <input type="text" data-agenda-idx="${idx}" data-field="tarde_horario" value="${diaObj.tarde_horario}" class="px-2 py-1 bg-white border border-lab-borderStrong rounded-[2px] font-mono" />
+            <input type="text" data-agenda-idx="${idx}" data-field="tarde_atividade" value="${diaObj.tarde_atividade}" class="px-2 py-1 bg-white border border-lab-borderStrong rounded-[2px]" />
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function removeItem(sectionKey, idx, commitLabel) {
+      if (!confirm('Deseja realmente excluir este item?')) return;
+      portalData[sectionKey].splice(idx, 1);
+      await savePortalData(`chore(admin): ${commitLabel}`);
+    }
+
+    /* Handlers Aba 1 */
     async function handleDocUpload(e) {
       e.preventDefault();
-      const fb = document.getElementById('uploadFeedback');
       const fileInput = document.getElementById('docFile');
       if (!fileInput.files[0]) return;
 
@@ -276,60 +661,130 @@
 
       if (res.ok) {
         const data = await res.json();
-        fb.textContent = `Arquivo "${data.filename}" enviado e indexado no Assistente.`;
-        fb.classList.remove('hidden');
+        showToast(`Documento "${data.filename}" enviado e indexado no Assistente!`);
         e.target.reset();
         await refreshAdminData();
       } else {
-        alert('Erro ao enviar documento. Verifique o formato (.pdf, .md ou .txt).');
+        alert('Erro ao enviar documento.');
       }
     }
 
     async function deleteDoc(filename) {
-      if (!confirm(`Remover o arquivo "${filename}" da base do assistente?`)) return;
+      if (!confirm(`Remover o arquivo "${filename}"?`)) return;
       const res = await fetch(`/api/admin/docs/${encodeURIComponent(filename)}`, {
         method: 'DELETE',
         headers: { 'X-Admin-Token': adminToken }
       });
-      if (res.ok) await refreshAdminData();
-    }
-
-    async function handleEventCreate(e) {
-      e.preventDefault();
-      const fb = document.getElementById('eventFeedback');
-      const payload = {
-        badge: document.getElementById('evBadge').value,
-        local: document.getElementById('evLocal').value,
-        titulo: document.getElementById('evTitle').value,
-        descricao: document.getElementById('evDesc').value,
-        detalhes: document.getElementById('evDetails').value,
-        cta: 'Ver detalhes'
-      };
-
-      const res = await fetch('/api/admin/events', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Admin-Token': adminToken
-        },
-        body: JSON.stringify(payload)
-      });
-
       if (res.ok) {
-        fb.textContent = 'Edital/Evento publicado com sucesso na página inicial.';
-        fb.classList.remove('hidden');
-        e.target.reset();
+        showToast(`Arquivo "${filename}" removido.`);
         await refreshAdminData();
       }
     }
 
-    async function deleteEvent(index) {
-      if (!confirm('Excluir este item do mural do portal?')) return;
-      const res = await fetch(`/api/admin/events/${index}`, {
-        method: 'DELETE',
-        headers: { 'X-Admin-Token': adminToken }
+    async function handleEventCreate(e) {
+      e.preventDefault();
+      const badge = document.getElementById('evBadge').value;
+      portalData.eventos = portalData.eventos || [];
+      portalData.eventos.unshift({
+        badge: badge,
+        badge_dark: badge === 'SELEÇÃO',
+        local: document.getElementById('evLocal').value.toUpperCase(),
+        titulo: document.getElementById('evTitle').value.trim(),
+        descricao: document.getElementById('evDesc').value.trim(),
+        detalhes: document.getElementById('evDetails').value.trim(),
+        cta: 'Ver detalhes'
       });
-      if (res.ok) await refreshAdminData();
+      e.target.reset();
+      await savePortalData('feat(admin): publica novo edital/evento');
+    }
+
+    /* Handlers Aba 2 */
+    async function saveCoordAndInst(e) {
+      e.preventDefault();
+      portalData.coordenacao = {
+        nome: document.getElementById('editCoordNome').value.trim(),
+        cargo: document.getElementById('editCoordCargo').value.trim(),
+        descricao: document.getElementById('editCoordDesc').value.trim(),
+        lattes: document.getElementById('editCoordLattes').value.trim()
+      };
+      portalData.institucional = portalData.institucional || {};
+      portalData.institucional.horario_geral = document.getElementById('editInstHorario').value.trim();
+      portalData.institucional.localizacao = document.getElementById('editInstLocal').value.trim();
+      await savePortalData('chore(admin): atualiza dados institucionais e coordenacao');
+    }
+
+    async function addTeamMember(e) {
+      e.preventDefault();
+      portalData.equipe = portalData.equipe || [];
+      portalData.equipe.push({
+        name: document.getElementById('teamName').value.trim(),
+        role: document.getElementById('teamRole').value.trim(),
+        category: document.getElementById('teamCategory').value,
+        area: document.getElementById('teamArea').value.trim()
+      });
+      e.target.reset();
+      await savePortalData('feat(admin): adiciona membro a equipe do LabMC');
+    }
+
+    /* Handlers Aba 3 */
+    async function addProject(e) {
+      e.preventDefault();
+      const toolsArr = document.getElementById('projTools').value
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      portalData.projetos = portalData.projetos || [];
+      portalData.projetos.unshift({
+        title: document.getElementById('projTitle').value.trim(),
+        category: document.getElementById('projCategory').value,
+        tag: document.getElementById('projTag').value.trim().toUpperCase(),
+        summary: document.getElementById('projSummary').value.trim(),
+        tools: toolsArr
+      });
+      e.target.reset();
+      await savePortalData('feat(admin): adiciona projeto de pesquisa');
+    }
+
+    async function addPublication(e) {
+      e.preventDefault();
+      portalData.producoes = portalData.producoes || [];
+      portalData.producoes.unshift({
+        year: document.getElementById('pubYear').value.trim(),
+        type: document.getElementById('pubType').value,
+        title: document.getElementById('pubTitle').value.trim(),
+        authors: document.getElementById('pubAuthors').value.trim(),
+        venue: document.getElementById('pubVenue').value.trim(),
+        link: ''
+      });
+      e.target.reset();
+      await savePortalData('feat(admin): adiciona producao cientifica');
+    }
+
+    /* Handlers Aba 4 */
+    async function addInfraItem(e) {
+      e.preventDefault();
+      portalData.infraestrutura = portalData.infraestrutura || [];
+      portalData.infraestrutura.push({
+        recurso: document.getElementById('infRecurso').value.trim(),
+        especificacao: document.getElementById('infSpec').value.trim(),
+        aplicacao: document.getElementById('infApp').value.trim(),
+        status: document.getElementById('infStatus').value
+      });
+      e.target.reset();
+      await savePortalData('feat(admin): adiciona equipamento/recurso na infraestrutura');
+    }
+
+    async function saveAgenda(e) {
+      e.preventDefault();
+      document.querySelectorAll('[data-agenda-idx]').forEach(input => {
+        const idx = Number(input.getAttribute('data-agenda-idx'));
+        const field = input.getAttribute('data-field');
+        if (portalData.agenda && portalData.agenda[idx]) {
+          portalData.agenda[idx][field] = input.value.trim();
+        }
+      });
+      await savePortalData('chore(admin): atualiza agenda semanal do Bloco 26');
     }
 
     if (adminToken) {
@@ -338,7 +793,7 @@
         headers: { 'X-Admin-Token': adminToken }
       }).then(res => {
         if (res.ok) showDashboard();
-      }); 
+      });
     }
   </script>
 </body>

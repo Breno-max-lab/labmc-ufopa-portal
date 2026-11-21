@@ -3,11 +3,11 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 import httpx
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
+from fastapi import Body, FastAPI, File, Form, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -18,8 +18,8 @@ load_dotenv()
 
 app = FastAPI(
     title="Portal Institucional LabMC - UFOPA",
-    description="Backend, CMS em JSON, RAG de Documentos e Sincronização GitHub do LabMC UFOPA",
-    version="1.5.0",
+    description="Backend, CMS Completo em JSON, RAG de Documentos e Sincronização GitHub do LabMC UFOPA",
+    version="2.0.0",
 )
 
 app.add_middleware(
@@ -42,7 +42,6 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "labmc2026").strip()
 
-# Configurações de persistência no GitHub
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "").strip()
 GITHUB_REPO = os.getenv("GITHUB_REPO", "Breno-max-lab/labmc-ufopa-portal").strip()
 GITHUB_BRANCH = os.getenv("GITHUB_BRANCH", "main").strip()
@@ -83,22 +82,12 @@ class ChatResponse(BaseModel):
     sources_used: List[str] = []
 
 
-class EventCreateRequest(BaseModel):
-    badge: str
-    local: str
-    titulo: str
-    descricao: str
-    detalhes: str
-    cta: str = "Ver detalhes"
-
-
 def verify_admin(x_admin_token: Optional[str]):
     if not x_admin_token or x_admin_token.strip() != ADMIN_PASSWORD:
         raise HTTPException(status_code=401, detail="Senha administrativa inválida ou não informada.")
 
 
 async def github_upsert_file(repo_path: str, content_bytes: bytes, commit_message: str) -> bool:
-    """Cria ou atualiza um arquivo diretamente no repositório GitHub via Contents API."""
     if not GITHUB_TOKEN or not GITHUB_REPO:
         return False
 
@@ -128,7 +117,6 @@ async def github_upsert_file(repo_path: str, content_bytes: bytes, commit_messag
 
 
 async def github_delete_file(repo_path: str, commit_message: str) -> bool:
-    """Remove um arquivo diretamente do repositório GitHub via Contents API."""
     if not GITHUB_TOKEN or not GITHUB_REPO:
         return False
 
@@ -211,6 +199,16 @@ def load_knowledge_chunks() -> List[dict]:
                     "source": "Produção Científica",
                     "text": f"Publicação ({pub.get('year', '')} - {pub.get('type', '')}): {pub.get('title', '')}. Autores: {pub.get('authors', '')}. Veículo: {pub.get('venue', '')}."
                 })
+            for eq in data.get("infraestrutura", []):
+                chunks.append({
+                    "source": "Infraestrutura e Equipamentos",
+                    "text": f"Recurso ({eq.get('recurso', '')}): {eq.get('especificacao', '')}. Aplicação: {eq.get('aplicacao', '')}. Status: {eq.get('status', '')}."
+                })
+            for mem in data.get("equipe", []):
+                chunks.append({
+                    "source": "Equipe do LabMC",
+                    "text": f"Membro ({mem.get('role', '')}): {mem.get('name', '')}. Área: {mem.get('area', '')}."
+                })
         except Exception:
             pass
 
@@ -276,6 +274,27 @@ async def admin_login(x_admin_token: Optional[str] = Header(None)):
     return {"authenticated": True, "github_sync": bool(GITHUB_TOKEN)}
 
 
+@app.put("/api/admin/content")
+async def admin_update_full_content(
+    payload: Dict[str, Any] = Body(...),
+    commit_msg: str = Header("chore(admin): atualiza conteudo do portal LabMC", alias="X-Commit-Message"),
+    x_admin_token: Optional[str] = Header(None),
+):
+    """Atualiza todo o portal_content.json e sincroniza diretamente com o GitHub."""
+    verify_admin(x_admin_token)
+    try:
+        updated_json = json.dumps(payload, ensure_ascii=False, indent=2)
+        DATA_FILE.write_text(updated_json, encoding="utf-8")
+        synced = await github_upsert_file(
+            repo_path="data/portal_content.json",
+            content_bytes=updated_json.encode("utf-8"),
+            commit_message=commit_msg,
+        )
+        return {"status": "ok", "github_synced": synced}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="Erro ao salvar conteúdo estruturado do portal.") from exc
+
+
 @app.post("/api/admin/upload-doc")
 async def admin_upload_doc(
     file: UploadFile = File(...),
@@ -296,7 +315,6 @@ async def admin_upload_doc(
     content_bytes = await file.read()
     dest_path.write_bytes(content_bytes)
 
-    # Salva no GitHub para persistência eterna
     synced_doc = await github_upsert_file(
         repo_path=f"static/docs/{safe_name}",
         content_bytes=content_bytes,
@@ -341,56 +359,25 @@ async def admin_delete_doc(filename: str, x_admin_token: Optional[str] = Header(
         repo_path=f"static/docs/{safe_name}",
         commit_message=f"docs(admin): remove documento {safe_name}",
     )
+
+    if DATA_FILE.exists():
+        try:
+            data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+            docs_list = data.get("documentos", [])
+            new_docs = [d for d in docs_list if not str(d.get("arquivo_pdf", "")).endswith(f"/{safe_name}")]
+            if len(new_docs) != len(docs_list):
+                data["documentos"] = new_docs
+                updated_json = json.dumps(data, ensure_ascii=False, indent=2)
+                DATA_FILE.write_text(updated_json, encoding="utf-8")
+                await github_upsert_file(
+                    repo_path="data/portal_content.json",
+                    content_bytes=updated_json.encode("utf-8"),
+                    commit_message=f"chore(admin): remove referencia de {safe_name} do catalogo",
+                )
+        except Exception:
+            pass
+
     return {"status": "deleted", "filename": safe_name, "github_synced": synced_del}
-
-
-@app.post("/api/admin/events")
-async def admin_add_event(payload: EventCreateRequest, x_admin_token: Optional[str] = Header(None)):
-    verify_admin(x_admin_token)
-    if not DATA_FILE.exists():
-        raise HTTPException(status_code=404, detail="Arquivo portal_content.json não encontrado.")
-
-    data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
-    eventos = data.setdefault("eventos", [])
-    eventos.insert(0, {
-        "badge": payload.badge.upper(),
-        "badge_dark": payload.badge.upper() in {"SELEÇÃO", "EDITAL"},
-        "local": payload.local.upper(),
-        "titulo": payload.titulo.strip(),
-        "descricao": payload.descricao.strip(),
-        "detalhes": payload.detalhes.strip() or payload.descricao.strip(),
-        "cta": payload.cta.strip() or "Ver detalhes"
-    })
-    updated_json = json.dumps(data, ensure_ascii=False, indent=2)
-    DATA_FILE.write_text(updated_json, encoding="utf-8")
-
-    synced = await github_upsert_file(
-        repo_path="data/portal_content.json",
-        content_bytes=updated_json.encode("utf-8"),
-        commit_message=f"feat(admin): publica edital/evento '{payload.titulo.strip()}'",
-    )
-    return {"status": "ok", "github_synced": synced}
-
-
-@app.delete("/api/admin/events/{index}")
-async def admin_delete_event(index: int, x_admin_token: Optional[str] = Header(None)):
-    verify_admin(x_admin_token)
-    if not DATA_FILE.exists():
-        raise HTTPException(status_code=404, detail="Arquivo portal_content.json não encontrado.")
-    data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
-    eventos = data.get("eventos", [])
-    if index < 0 or index >= len(eventos):
-        raise HTTPException(status_code=404, detail="Evento não encontrado.")
-    removed = eventos.pop(index)
-    updated_json = json.dumps(data, ensure_ascii=False, indent=2)
-    DATA_FILE.write_text(updated_json, encoding="utf-8")
-
-    synced = await github_upsert_file(
-        repo_path="data/portal_content.json",
-        content_bytes=updated_json.encode("utf-8"),
-        commit_message=f"chore(admin): remove edital/evento '{removed.get('titulo', '')}'",
-    )
-    return {"status": "deleted", "github_synced": synced}
 
 
 @app.post("/api/chat", response_model=ChatResponse)
@@ -479,4 +466,4 @@ async def serve_admin():
     admin_file = STATIC_DIR / "admin.html"
     if not admin_file.exists():
         raise HTTPException(status_code=404, detail="Arquivo static/admin.html não encontrado.")
-    return FileResponse(str(admin_file)) 
+    return FileResponse(str(admin_file))
